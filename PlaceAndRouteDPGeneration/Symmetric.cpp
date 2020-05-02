@@ -30,10 +30,9 @@ Symmetric::Symmetric(QWidget *parent)
 	QGridLayout* mainLayout = new QGridLayout();
 
 	// row0
-
 	int row = 0;
 	mainLayout->addWidget(new QPushButton("back"), row, 0, 1, 1);
-	mainLayout->addWidget(new QLabel("SYMMETRIC"), row, 1, 1, 4);
+	mainLayout->addWidget(new QLabel("SYMMETRIC"), row, 3, 1, 4);
 	++row;
 	// row1
 	mainLayout->addWidget(new QPushButton("----------------------------"), row, 0, 1, 5);
@@ -56,13 +55,13 @@ Symmetric::Symmetric(QWidget *parent)
 	mainLayout->addWidget(new QPushButton("Add"), row, 4, 1, 1);
 	++row;
 	// row5, 6
-	mainLayout->addWidget(new QRadioButton("Horizontal"), row, 0, 1, 1);
-	mainLayout->addWidget(new QPushButton("Browse"), row, 1, 2, 1);
-	mainLayout->addWidget(new QLineEdit(), row, 2, 2, 1);
-	mainLayout->addWidget(new QRadioButton("Vertical"), ++row, 0, 1, 1);
+	mainLayout->addWidget(new QRadioButton("Horizontal"), row, 1, 1, 1);
+	mainLayout->addWidget(new QPushButton("Browse"), row, 2, 2, 1);
+	mainLayout->addWidget(new QLineEdit(), row, 3, 2, 1);
+	mainLayout->addWidget(new QRadioButton("Vertical"), ++row, 1, 1, 1);
 	++row;
-	// row7
-	mainLayout->addWidget(new QGraphicsView(), row, 0, 2, 4);
+	// row7, 8
+	mainLayout->addWidget(new QGraphicsView(), row, 0, 8, 4);
 	mainLayout->addWidget(new QPushButton("Place"), row, 4, 1, 1);
 	mainLayout->addWidget(new QPushButton("Route"), ++row, 4, 1, 1);
 
@@ -74,8 +73,8 @@ Symmetric::Symmetric(QWidget *parent)
 	//mainLayout->setRowStretch(4, 0);
 	//mainLayout->setRowStretch(5, 0);
 	//mainLayout->setRowStretch(6, 0);
-	//mainLayout->setRowStretch(7, 20);
-	//mainLayout->setRowStretch(8, 20);
+	//mainLayout->setRowStretch(7, 200);
+	//mainLayout->setRowStretch(8, 200);
 
 
 	setLayout(mainLayout);
