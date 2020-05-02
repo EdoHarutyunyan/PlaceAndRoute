@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/PlaceAndRouteDPGeneration">
+        <file>Resources/green.png</file>
+        <file>Resources/red.jpg</file>
+        <file>Resources/blue.jpg</file>
+        <file>Resources/yellow.png</file>
+    </qresource>
+</RCC>
