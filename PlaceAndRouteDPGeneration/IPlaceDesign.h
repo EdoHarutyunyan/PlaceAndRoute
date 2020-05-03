@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "GroupCells.h"
+#include <QGraphicsRectItem>
 
 class IPlaceDesign
 {

@@ -11,76 +11,42 @@
 #include <QMessageBox>
 #include <QGraphicsSimpleTextItem>
 
-#include <QLabel>
 #include <QLine>
 #include <QSpacerItem>
 
 Symmetric::Symmetric(QWidget *parent)
 	: QWidget(parent)
-	, ui(new Ui::Symmetric)
+	, m_graphicsView(new QGraphicsView(this))
 	, m_scene(new QGraphicsScene(this))
+	, m_backButton(new QPushButton("< back", this))
+	, m_detailsButton(new QPushButton("Details", this))
+	, m_addButton(new QPushButton("Add", this))
+	, m_browseButton(new QPushButton("Browse", this))
+	, m_placeButton(new QPushButton("Place", this))
+	, m_routeButton(new QPushButton("Route", this))
+	, m_typeLabel(new QLabel("Type", this))
+	, m_countLabel(new QLabel("Count", this))
+	, m_widthLabel(new QLabel("Width", this))
+	, m_heightLabel(new QLabel("Height", this))
+	, m_typeComboBox(new QComboBox(this))
+	, m_horizontalRadioButton(new QRadioButton("Horizontal", this))
+	, m_verticalRadioButton(new QRadioButton("Vertical", this))
+	, m_countLineEdit(new QLineEdit(this))
+	, m_widthLineEdit(new QLineEdit(this))
+	, m_heightLineEdit(new QLineEdit(this))
+	, m_browseLineEdit(new QLineEdit(this))
 {
-    //ui->setupUi(this);
-	//			  
-	//ui->TypeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/green.png"), "green");
-	//ui->TypeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/yellow.png"), "yellow");
-	//ui->TypeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/blue.jpg"), "blue");
-	//ui->TypeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/red.jpg"), "red");
+	Initilize();
 
-	QGridLayout* mainLayout = new QGridLayout();
-
-	QFrame* line = new QFrame();
-	line->setGeometry(QRect(/* ... */));
-	line->setFrameShape(QFrame::HLine); // Replace by VLine for vertical line
-	line->setFrameShadow(QFrame::Sunken); 
-
-	// row0
-	int row = 0;
-	mainLayout->addWidget(new QPushButton("back"), row, 0, 1, 1);
-	mainLayout->addWidget(new QLabel("SYMMETRIC"), row, 3, 1, 4);
-	++row;
-	// row1
-	mainLayout->addWidget(line, row, 0, 1, 5);
-	++row;
-	// row2
-	mainLayout->addWidget(new QPushButton("Details"), row, 0, 1, 1);
-	++row;
-	// row3
-	//setContentMargin(0,0,0,0)
-	mainLayout->addWidget(new QLabel("Type"), row, 0, 1, 1, Qt::AlignCenter);
-	mainLayout->addWidget(new QLabel("Count"), row, 1, 1, 1);
-	mainLayout->addWidget(new QLabel("Width"), row, 2, 1, 1);
-	mainLayout->addWidget(new QLabel("Height"), row, 3, 1, 1);
-	mainLayout->addItem(new QSpacerItem(25, 25), row, 4, 1, 1);
-	++row;
-	// row4
-	mainLayout->addWidget(new QComboBox(), row, 0, 1, 1);
-	mainLayout->addWidget(new QLineEdit(), row, 1, 1, 1);
-	mainLayout->addWidget(new QLineEdit(), row, 2, 1, 1);
-	mainLayout->addWidget(new QLineEdit(), row, 3, 1, 1);
-	mainLayout->addWidget(new QPushButton("Add"), row, 4, 1, 1);
-	++row;
-	// row5, 6
-	mainLayout->addWidget(new QRadioButton("Horizontal"), row, 1, 1, 1);
-	mainLayout->addWidget(new QPushButton("Browse"), row, 2, 2, 1, Qt::AlignLeft);
-	mainLayout->addWidget(new QLineEdit(), row, 3, 2, 1);
-	mainLayout->addWidget(new QRadioButton("Vertical"), ++row, 1, 1, 1);
-	++row;
-	// row7, 8
-	mainLayout->addWidget(new QGraphicsView(), row, 0, 8, 4);
-	mainLayout->addWidget(new QPushButton("Place"), row, 4, 1, 1);
-	mainLayout->addWidget(new QPushButton("Route"), ++row, 4, 1, 1);
-
-	setLayout(mainLayout);
-
-	showMaximized();
-	setWindowTitle("Symmetric");
+	connect(m_addButton, SIGNAL(released()), this, SLOT(on_Add_released()));
+	connect(m_backButton, SIGNAL(released()), this, SLOT(on_Back_released()));
+	connect(m_browseButton, SIGNAL(released()), this, SLOT(on_Browse_released()));
+	connect(m_detailsButton, SIGNAL(released()), this, SLOT(on_Details_released()));
+	connect(m_placeButton, SIGNAL(released()), this, SLOT(on_Place_released()));
+	connect(m_routeButton, SIGNAL(released()), this, SLOT(on_Route_released()));
 }
 
-Symmetric::~Symmetric()
-{
-    delete ui;
-}
+
 
 void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectItem* area)
 { 
@@ -393,6 +359,63 @@ Symmetric::SymmetryLine Symmetric::GetSymmetryLine() const
 	return m_symmetryLine;
 }
 
+void Symmetric::Initilize()
+{
+	QGridLayout* mainLayout = new QGridLayout();
+
+	QFrame* line = new QFrame();
+	line->setGeometry(QRect(/* ... */));
+	line->setFrameShape(QFrame::HLine); // Replace by VLine for vertical line
+	line->setFrameShadow(QFrame::Sunken);
+
+	// row0
+	int row = 0;
+	mainLayout->addWidget(m_backButton, row, 0, 1, 1);
+	mainLayout->addWidget(new QLabel("SYMMETRIC"), row, 1, 1, 4, Qt::AlignCenter);
+	++row;
+	// row1
+	mainLayout->addWidget(line, row, 0, 1, 5);
+	++row;
+	// row2
+	mainLayout->addWidget(m_detailsButton, row, 0, 1, 1);
+	++row;
+	// row3
+	//setContentMargin(0,0,0,0)
+	mainLayout->addWidget(m_typeLabel, row, 0, 1, 1, Qt::AlignCenter);
+	mainLayout->addWidget(m_countLabel, row, 1, 1, 1, Qt::AlignCenter);
+	mainLayout->addWidget(m_widthLabel, row, 2, 1, 1, Qt::AlignCenter);
+	mainLayout->addWidget(m_heightLabel, row, 3, 1, 1, Qt::AlignCenter);
+	mainLayout->addItem(new QSpacerItem(25, 25), row, 4, 1, 1);
+	++row;
+	// row4
+	mainLayout->addWidget(m_typeComboBox, row, 0, 1, 1);
+	mainLayout->addWidget(m_countLineEdit, row, 1, 1, 1);
+	mainLayout->addWidget(m_widthLineEdit, row, 2, 1, 1);
+	mainLayout->addWidget(m_heightLineEdit, row, 3, 1, 1);
+	mainLayout->addWidget(m_addButton, row, 4, 1, 1);
+	++row;
+	// row5, 6
+	mainLayout->addWidget(m_horizontalRadioButton, row, 1, 1, 1);
+	mainLayout->addWidget(m_browseButton, row, 2, 2, 1, Qt::AlignRight);
+	mainLayout->addWidget(m_browseLineEdit, row, 3, 2, 1);
+	mainLayout->addWidget(m_verticalRadioButton, ++row, 1, 1, 1);
+	++row;
+	// row7-14
+	mainLayout->addWidget(m_graphicsView, row, 0, 8, 4);
+	mainLayout->addWidget(m_placeButton, 13, 4, 1, 1);
+	mainLayout->addWidget(m_routeButton, 14, 4, 1, 1);
+
+	setLayout(mainLayout);
+
+	showMaximized();
+	setWindowTitle("Symmetric");
+
+	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/green.png"), "green");
+	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/yellow.png"), "yellow");
+	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/blue.jpg"), "blue");
+	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/red.jpg"), "red");
+}
+
 void Symmetric::AddGroupCells(
 	const Cell::Type type, 
 	const uint32_t count, 
@@ -442,13 +465,13 @@ void Symmetric::onSymmetricChosen()
 	show();
 }
 
-void Symmetric::on_ADD_released()
+void Symmetric::on_Add_released()
 {
 	Cell::Type type{};
-	const auto typeIndex = ui->TypeComboBox->currentIndex();
-	const auto count = ui->CountLineEdit->text().toUInt();
-	const auto width = ui->WidthLineEdit->text().toUInt();
-	const auto height = ui->HeightLineEdit->text().toUInt();
+	const auto typeIndex = m_typeComboBox->currentIndex();
+	const auto count = m_countLineEdit->text().toUInt();
+	const auto width = m_widthLineEdit->text().toUInt();
+	const auto height = m_heightLineEdit->text().toUInt();
 
 	switch (typeIndex)
 	{
@@ -480,11 +503,11 @@ void Symmetric::on_Place_released()
 		return;
 	}
 
-	if (ui->Vertical->isChecked())
+	if (m_verticalRadioButton->isChecked())
 	{
 		SetSymmetryLine(SymmetryLine::Vertical);
 	}
-	else if (ui->Horizontal->isChecked())
+	else if (m_horizontalRadioButton->isChecked())
 	{
 		SetSymmetryLine(SymmetryLine::Horizontal);
 	}
@@ -524,16 +547,24 @@ void Symmetric::on_Place_released()
 
 		x += (rectWidht + 100);
 	}
-	//QGraphicsView* a = new ..;
-	//a->setScene(m_scene);
-	//a->show();
-	ui->graphicsView->setScene(m_scene);
+
+	m_graphicsView->setScene(m_scene);
 };
 
-void Symmetric::on_browse_released()
+void Symmetric::on_Back_released()
+{
+	close();
+	// show mainwindow // TODO
+}
+
+void Symmetric::on_Browse_released()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, "Open a file", QDir::homePath());
-	ui->path->setText(fileName);
+	m_browseLineEdit->setText(fileName);
+}
+
+void Symmetric::on_Details_released()
+{
 }
 
 void Symmetric::on_Route_released()
@@ -544,7 +575,7 @@ void Symmetric::on_Route_released()
 		return;
 	}
 
-	QString fileName = ui->path->text();
+	QString fileName = m_browseLineEdit->text();
 	QFile file(fileName);
 
 	if (!file.open(QFile::ReadOnly | QFile::Text))

@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    this->setWindowTitle("Design patters");
+    setWindowTitle("Design patters");
 }
 
 MainWindow::~MainWindow()
