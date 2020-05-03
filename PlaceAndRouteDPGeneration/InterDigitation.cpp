@@ -11,32 +11,60 @@
 #include <QMessageBox>
 #include <QGraphicsSimpleTextItem>
 
-InterDigitation::InterDigitation(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::InterDigitation),
-	m_scene(new QGraphicsScene(this))
+InterDigitation::InterDigitation(QWidget* parent)
+	: QWidget(parent)
+	, m_graphicsView(new QGraphicsView(this))
+	, m_scene(new QGraphicsScene(this))
+	, m_backButton(new QPushButton("< Back", this))
+	, m_detailsButton(new QPushButton("Details", this))
+	, m_addButton(new QPushButton("Add", this))
+	, m_browseButton(new QPushButton("Browse", this))
+	, m_placeButton(new QPushButton("Place", this))
+	, m_routeButton(new QPushButton("Route", this))
+	, m_typeLabel(new QLabel("Type", this))
+	, m_countLabel(new QLabel("Count", this))
+	, m_widthLabel(new QLabel("Width", this))
+	, m_heightLabel(new QLabel("Height", this))
+	, m_typeComboBox(new QComboBox(this))
+	, m_commonCentroidRadioButton(new QRadioButton("CommonCentroid", this))
+	, m_periodicRadioButton(new QRadioButton("Periodic", this))
+	, m_countLineEdit(new QLineEdit(this))
+	, m_widthLineEdit(new QLineEdit(this))
+	, m_heightLineEdit(new QLineEdit(this))
+	, m_browseLineEdit(new QLineEdit(this))
 {
-    ui->setupUi(this);
+	Initialize();
 
-	ui->TypeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/green.png"), "green");
-	ui->TypeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/yellow.png"), "yellow");
-	ui->TypeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/blue.jpg"), "blue");
-	ui->TypeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/red.jpg"), "red");
-}
-
-InterDigitation::~InterDigitation()
-{
-    delete ui;
+	connect(m_addButton, SIGNAL(released()), this, SLOT(on_Add_released()));
+	connect(m_backButton, SIGNAL(released()), this, SLOT(on_Back_released()));
+	connect(m_browseButton, SIGNAL(released()), this, SLOT(on_Browse_released()));
+	connect(m_detailsButton, SIGNAL(released()), this, SLOT(\on_Details_released()));
+	connect(m_placeButton, SIGNAL(released()), this, SLOT(on_Place_released()));
+	connect(m_routeButton, SIGNAL(released()), this, SLOT(on_Route_released()));
 }
 
 void InterDigitation::Place(const uint32_t row, const uint32_t column, QGraphicsRectItem* area)
 {
 	static uint32_t idNumber = 0U;
 	const auto cells = m_groupCells.GetCells();
-	
+
 	// because all cells has the same width and height
 	uint32_t width = cells.begin()->second.back().GetWidth();
 	uint32_t height = cells.begin()->second.back().GetHeight();
+
+	uint32_t less{};
+	uint32_t more{};
+
+	if (row <= column)
+	{
+		less = row;
+		more = column;
+	}
+	else
+	{
+		less = column;
+		more = row;
+	}
 
 	if (GetMode() == Mode::CommonCentroid)
 	{
@@ -44,7 +72,6 @@ void InterDigitation::Place(const uint32_t row, const uint32_t column, QGraphics
 		std::vector<std::pair<Cell::Type, uint32_t>> evenCells;
 		oddCells.reserve(m_groupCells.GetCount());
 		evenCells.reserve(m_groupCells.GetCount());
-
 
 		for (const auto& cell : cells)
 		{
@@ -59,27 +86,12 @@ void InterDigitation::Place(const uint32_t row, const uint32_t column, QGraphics
 			}
 		}
 
-		uint32_t less{};
-		uint32_t more{};
-
-		if (row <= column)
-		{
-			less = row;
-			more = column;
-		}
-		else
-		{
-			less = column;
-			more = row;
-		}
-
 		for (size_t i = 0; i < less; ++i)
 		{
 			for (size_t j = 0; j < more / 2; ++j)
 			{
 				std::pair<Cell::Type, uint32_t> cell = evenCells.back();
 
-				Qt::GlobalColor color = GetGlobalColorByType(cell.first);
 				QGraphicsRectItem* rect1 = new QGraphicsRectItem(0, 0, width, height, area);
 				QGraphicsRectItem* rect2 = new QGraphicsRectItem(0, 0, width, height, area);
 
@@ -97,7 +109,7 @@ void InterDigitation::Place(const uint32_t row, const uint32_t column, QGraphics
 				else
 				{
 					rect1->setPos(QPoint((i * width), (j * height)) + QPoint(25, 25));
-					rect2->setPos(QPoint((row - i - 1) * width, (column - j - 1) * height) + QPoint(25, 25));
+					rect2->setPos(QPoint((column - i - 1) * width, (row - j - 1) * height) + QPoint(25, 25));
 				}
 
 				QString id1 = QString::fromStdString("Id" + std::to_string(idNumber++));
@@ -134,7 +146,6 @@ void InterDigitation::Place(const uint32_t row, const uint32_t column, QGraphics
 		while (!evenCells.empty())
 		{
 			std::pair<Cell::Type, uint32_t> currentCell = evenCells.back();
-			Qt::GlobalColor color = GetGlobalColorByType(currentCell.first);
 			QGraphicsRectItem* rect1 = new QGraphicsRectItem(0, 0, width, height, area);
 			QGraphicsRectItem* rect2 = new QGraphicsRectItem(0, 0, width, height, area);
 
@@ -144,65 +155,68 @@ void InterDigitation::Place(const uint32_t row, const uint32_t column, QGraphics
 			rect2->setPen(QPen(Qt::black));
 			rect2->setBrush(QBrush(GetGlobalColorByType(currentCell.first)));
 
+			QString id1 = QString::fromStdString("Id" + std::to_string(idNumber++));
+			QString id2 = QString::fromStdString("Id" + std::to_string(idNumber++));
+
+			QGraphicsSimpleTextItem* idItem1 = new QGraphicsSimpleTextItem(id1, rect1);
+			QGraphicsSimpleTextItem* idItem2 = new QGraphicsSimpleTextItem(id2, rect2);
+
+			idItem1->setPos(((rect1->rect().topLeft() + rect1->rect().topRight()) / 2, (rect1->rect().topLeft() + rect1->rect().bottomLeft()) / 2));
+			idItem2->setPos(((rect2->rect().topLeft() + rect2->rect().topRight()) / 2, (rect2->rect().topLeft() + rect2->rect().bottomLeft()) / 2));
+
 			for (size_t j = 0; j < currentCell.second; ++j)
 			{
 				if (row <= column)
 				{
-				/*	rect1->setPos(QPoint((column / 2 * width), (j* height)) + QPoint(25, 25));
-					rect2->setPos(QPoint((column / 2 * width), ((row - j - 1) * height) + QPoint(25, 25));*/
-					//m_scene->addRect(QRect((column / 2 * width), (j * height), width, height), QPen(Qt::black), QBrush(color, Qt::SolidPattern));
-					//m_scene->addRect(QRect((column / 2 * width), ((row - j - 1) * height), width, height), QPen(Qt::black), QBrush(color, Qt::SolidPattern));
+					rect1->setPos(QPoint((column / 2 * width), (j * height)) + QPoint(25, 25));
+					rect2->setPos(QPoint((column / 2 * width), (row - j - 1) * height) + QPoint(25, 25));
 				}
 				else
 				{
-					//m_scene->addRect(QRect((j * width), ((row / 2) * height), width, height), QPen(Qt::black), QBrush(color, Qt::SolidPattern));
-					//m_scene->addRect(QRect(((column - j - 1) * width), ((row / 2) * height), width, height), QPen(Qt::black), QBrush(color, Qt::SolidPattern));
+					rect1->setPos(QPoint((j * width), (row / 2) * height) + QPoint(25, 25));
+					rect2->setPos(QPoint(((column - j - 1) * width), (row / 2) * height) + QPoint(25, 25));
 				}
-			
 			}
-			
+
 			evenCells.pop_back();
 		}
 	}
 	else
 	{
-		//const uint32_t typesCount = m_groupCells.size();
-		//for (size_t i = 0; i < typesCount; ++i)
-		//{
-		//	GroupCells* currentDetail = m_groupCells.back();
+		const uint32_t typesCount = cells.size();
+		uint32_t i = 0;
+		for (auto it = cells.begin(); it != cells.end(); ++it)
+		{
+			Cell currentCell = it->second.back();
 
-		//	height = currentDetail->GetHeight();
-		//	width = currentDetail->GetWidth();
-		//	Qt::GlobalColor color = GetGlobalColorByType(currentDetail->GetType());
+			for (size_t j = 0; j < more; j += typesCount)
+			{
+				QGraphicsRectItem* rect = new QGraphicsRectItem(0, 0, width, height, area);
 
-		//	// horizontal
-		//	if (row == 1)
-		//	{
-		//		for (size_t j = 0; j < column; j += typesCount)
-		//		{
-		//			m_scene->addRect(QRect(((i + j) * width), height, width, height), QPen(Qt::black), QBrush(color, Qt::SolidPattern));
-		//		}
-		//	}
-		//	else // vertical
-		//	{
-		//		for (size_t j = 0; j < row; j += typesCount)
-		//		{
-		//			m_scene->addRect(QRect(width, ((i + j) * height), width, height), QPen(Qt::black), QBrush(color, Qt::SolidPattern));
-		//		}
-		//	}
+				rect->setPen(QPen(Qt::black));
+				rect->setBrush(QBrush(GetGlobalColorByType(currentCell.GetType())));
 
-		//	m_groupCells.pop_back();
-		//}
+				QString id = QString::fromStdString("Id" + std::to_string(idNumber++));
+
+				QGraphicsSimpleTextItem* idItem = new QGraphicsSimpleTextItem(id, rect);
+				idItem->setPos(((rect->rect().topLeft() + rect->rect().topRight()) / 2, (rect->rect().topLeft() + rect->rect().bottomLeft()) / 2));
+
+				if (row == 1)
+				{
+					// horizontal
+					rect->setPos(QPoint(((i + j) * width), height) + QPoint(25, -25));
+				}
+				else
+				{
+					// vertical
+					rect->setPos(QPoint(width, (i + j) * height) + QPoint(-25, 25));
+				}
+			}
+			++i;
+		}
 	}
-}
 
-void InterDigitation::Route(const std::vector<std::pair<QString, QString>>& ids)
-{
-}
-
-std::vector<std::pair<QString, QString>> InterDigitation::Parse(QString&& text)
-{
-	return std::vector<std::pair<QString, QString>>();
+	m_scene->addItem(area);
 }
 
 std::vector<std::pair<uint32_t, uint32_t>> InterDigitation::AreaGeneration()
@@ -290,6 +304,63 @@ std::vector<std::pair<uint32_t, uint32_t>> InterDigitation::AreaGeneration()
 	return areaSize;
 }
 
+void InterDigitation::Initialize()
+{
+	QGridLayout* mainLayout = new QGridLayout();
+
+	QFrame* line = new QFrame();
+	line->setGeometry(QRect(/* ... */));
+	line->setFrameShape(QFrame::HLine); // Replace by VLine for vertical line
+	line->setFrameShadow(QFrame::Sunken);
+
+	// row0
+	int row = 0;
+	mainLayout->addWidget(m_backButton, row, 0, 1, 1);
+	mainLayout->addWidget(new QLabel("INTER-DIGITATION"), row, 1, 1, 4, Qt::AlignCenter);
+	++row;
+	// row1
+	mainLayout->addWidget(line, row, 0, 1, 5);
+	++row;
+	// row2
+	mainLayout->addWidget(m_detailsButton, row, 0, 1, 1);
+	++row;
+	// row3
+	//setContentMargin(0,0,0,0)
+	mainLayout->addWidget(m_typeLabel, row, 0, 1, 1, Qt::AlignCenter);
+	mainLayout->addWidget(m_countLabel, row, 1, 1, 1, Qt::AlignCenter);
+	mainLayout->addWidget(m_widthLabel, row, 2, 1, 1, Qt::AlignCenter);
+	mainLayout->addWidget(m_heightLabel, row, 3, 1, 1, Qt::AlignCenter);
+	mainLayout->addItem(new QSpacerItem(25, 25), row, 4, 1, 1);
+	++row;
+	// row4
+	mainLayout->addWidget(m_typeComboBox, row, 0, 1, 1);
+	mainLayout->addWidget(m_countLineEdit, row, 1, 1, 1);
+	mainLayout->addWidget(m_widthLineEdit, row, 2, 1, 1);
+	mainLayout->addWidget(m_heightLineEdit, row, 3, 1, 1);
+	mainLayout->addWidget(m_addButton, row, 4, 1, 1);
+	++row;
+	// row5, 6
+	mainLayout->addWidget(m_commonCentroidRadioButton, row, 1, 1, 1);
+	mainLayout->addWidget(m_browseButton, row, 2, 2, 1, Qt::AlignRight);
+	mainLayout->addWidget(m_browseLineEdit, row, 3, 2, 1);
+	mainLayout->addWidget(m_periodicRadioButton, ++row, 1, 1, 1);
+	++row;
+	// row7-14
+	mainLayout->addWidget(m_graphicsView, row, 0, 8, 4);
+	mainLayout->addWidget(m_placeButton, 13, 4, 1, 1);
+	mainLayout->addWidget(m_routeButton, 14, 4, 1, 1);
+
+	setLayout(mainLayout);
+
+	showMaximized();
+	setWindowTitle("Symmetric");
+
+	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/green.png"), "green");
+	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/yellow.png"), "yellow");
+	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/blue.jpg"), "blue");
+	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/red.jpg"), "red");
+}
+
 void InterDigitation::AddGroupCells(
 	const Cell::Type type,
 	const uint32_t count,
@@ -344,13 +415,13 @@ InterDigitation::Mode InterDigitation::GetMode() const
 	return m_mode;
 }
 
-void InterDigitation::on_ADD_released()
+void InterDigitation::on_Add_released()
 {
 	Cell::Type type{};
-	const auto typeIndex = ui->TypeComboBox->currentIndex();
-	const auto count = ui->CountLineEdit->text().toUInt();
-	const auto width = ui->WidthLineEdit->text().toUInt();
-	const auto height = ui->HeightLineEdit->text().toUInt();
+	const auto typeIndex = m_typeComboBox->currentIndex();
+	const auto count = m_countLineEdit->text().toUInt();
+	const auto width = m_widthLineEdit->text().toUInt();
+	const auto height = m_heightLineEdit->text().toUInt();
 
 	switch (typeIndex)
 	{
@@ -374,10 +445,21 @@ void InterDigitation::on_ADD_released()
 	AddGroupCells(type, count, width, height);
 }
 
-void InterDigitation::on_browse_released()
+void InterDigitation::on_Browse_released()
 {
-	//QString fileName = QFileDialog::getOpenFileName(this, "Open a file", QDir::homePath());
-	//ui->path->setText(fileName);
+	QString fileName = QFileDialog::getOpenFileName(this, "Open a file", QDir::homePath());
+	m_browseLineEdit->setText(fileName);
+}
+
+void InterDigitation::on_Back_released()
+{
+	close();
+	//TODO
+}
+
+void InterDigitation::on_Details_released()
+{
+	// SHOW Details
 }
 
 void InterDigitation::on_Place_released()
@@ -388,11 +470,11 @@ void InterDigitation::on_Place_released()
 		return;
 	}
 
-	if (ui->CommonCentroid->isChecked())
+	if (m_commonCentroidRadioButton->isChecked())
 	{
 		SetMode(Mode::CommonCentroid);
 	}
-	else if (ui->Periodic->isChecked())
+	else if (m_periodicRadioButton->isChecked())
 	{
 		SetMode(Mode::Periodic);
 	}
@@ -434,11 +516,43 @@ void InterDigitation::on_Place_released()
 		x += (rectWidht + 100);
 	}
 
-	ui->graphicsView->setScene(m_scene);
+	m_graphicsView->setScene(m_scene);
 }
 
 void InterDigitation::on_Route_released()
 {
+	if (!m_groupCells.GetCount())
+	{
+		QMessageBox::warning(this, "Warning!", "Not elements to route!");
+		return;
+	}
+
+	QString fileName = m_browseLineEdit->text();
+	QFile file(fileName);
+
+	if (!file.open(QFile::ReadOnly | QFile::Text))
+	{
+		QMessageBox::warning(this, "title", "file not opened");
+	}
+
+	QTextStream in(&file);
+	QString text = in.readAll();
+
+	std::vector<std::pair<QString, QString>> ids = Parse(std::move(text));
+
+	Route(ids);
+}
+
+std::vector<std::pair<QString, QString>> InterDigitation::Parse(QString&& text)
+{
+	// TODO
+
+	return std::vector<std::pair<QString, QString>>();
+}
+
+void InterDigitation::Route(const std::vector<std::pair<QString, QString>>& ids)
+{
+	// TODO
 }
 
 void InterDigitation::onInterDigitationChosen()

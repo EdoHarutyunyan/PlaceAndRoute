@@ -1,13 +1,15 @@
 #ifndef INTERDIGITATION_H
 #define INTERDIGITATION_H
 
-#include <QWidget>
-#include <QGraphicsScene>
 #include "IPlaceDesign.h"
 
-namespace Ui {
-class InterDigitation;
-}
+#include <QWidget>
+#include <QGraphicsScene>
+#include <QPushButton>
+#include <QLabel>
+#include <QComboBox>
+#include <QRadioButton>
+#include <QLineEdit>
 
 class InterDigitation : public QWidget, public IPlaceDesign
 {
@@ -15,7 +17,7 @@ class InterDigitation : public QWidget, public IPlaceDesign
 
 public:
     explicit InterDigitation(QWidget *parent = nullptr);
-    ~InterDigitation();
+	~InterDigitation() = default;
 
 	enum class Mode : bool
 	{
@@ -32,6 +34,7 @@ public:
 	Mode GetMode() const;
 
 private:
+	void Initialize();
 	void AddGroupCells(Cell::Type type, uint32_t count, uint32_t width, uint32_t height) override;
 	Qt::GlobalColor GetGlobalColorByType(Cell::Type type) const;
 
@@ -39,15 +42,35 @@ public slots:
 	void onInterDigitationChosen();
 
 private slots:
-	void on_browse_released();
-	void on_ADD_released();
+	void on_Add_released();
+	void on_Back_released();
+	void on_Browse_released();
+	void on_Details_released();
 	void on_Place_released();
 	void on_Route_released();
 
 private:
-    Ui::InterDigitation *ui;
-	QGraphicsScene* m_scene;
 	Mode m_mode;
+
+	QGraphicsView* m_graphicsView;
+	QGraphicsScene* m_scene;
+	QPushButton* m_backButton;
+	QPushButton* m_detailsButton;
+	QPushButton* m_addButton;
+	QPushButton* m_browseButton;
+	QPushButton* m_placeButton;
+	QPushButton* m_routeButton;
+	QLabel* m_typeLabel;
+	QLabel* m_countLabel;
+	QLabel* m_widthLabel;
+	QLabel* m_heightLabel;
+	QComboBox* m_typeComboBox;
+	QRadioButton* m_commonCentroidRadioButton;
+	QRadioButton* m_periodicRadioButton;
+	QLineEdit* m_countLineEdit;
+	QLineEdit* m_widthLineEdit;
+	QLineEdit* m_heightLineEdit;
+	QLineEdit* m_browseLineEdit;
 };
 
 #endif // INTERDIGITATION_H

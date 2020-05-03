@@ -34,7 +34,7 @@ public:
 	SymmetryLine GetSymmetryLine() const;
 
 private:
-	void Initilize();
+	void Initialize();
 	void AddGroupCells(Cell::Type type, uint32_t count, uint32_t width, uint32_t height) override;
 	Qt::GlobalColor GetGlobalColorByType(Cell::Type type) const;
 

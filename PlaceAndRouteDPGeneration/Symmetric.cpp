@@ -18,7 +18,7 @@ Symmetric::Symmetric(QWidget *parent)
 	: QWidget(parent)
 	, m_graphicsView(new QGraphicsView(this))
 	, m_scene(new QGraphicsScene(this))
-	, m_backButton(new QPushButton("< back", this))
+	, m_backButton(new QPushButton("< Back", this))
 	, m_detailsButton(new QPushButton("Details", this))
 	, m_addButton(new QPushButton("Add", this))
 	, m_browseButton(new QPushButton("Browse", this))
@@ -36,7 +36,7 @@ Symmetric::Symmetric(QWidget *parent)
 	, m_heightLineEdit(new QLineEdit(this))
 	, m_browseLineEdit(new QLineEdit(this))
 {
-	Initilize();
+	Initialize();
 
 	connect(m_addButton, SIGNAL(released()), this, SLOT(on_Add_released()));
 	connect(m_backButton, SIGNAL(released()), this, SLOT(on_Back_released()));
@@ -359,7 +359,7 @@ Symmetric::SymmetryLine Symmetric::GetSymmetryLine() const
 	return m_symmetryLine;
 }
 
-void Symmetric::Initilize()
+void Symmetric::Initialize()
 {
 	QGridLayout* mainLayout = new QGridLayout();
 

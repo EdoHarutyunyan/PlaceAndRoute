@@ -31,9 +31,9 @@ void MainWindow::on_symmetric_released()
 
 void MainWindow::on_interDegitation_released()
 {
-	//m_interDigitation = new InterDigitation;
-	//this->hide();
-	//m_interDigitation->show();
+	m_interDigitation = new InterDigitation;
+	this->hide();
+	m_interDigitation->show();
 }
 
 void MainWindow::on_minimumArea_released()
