@@ -8,8 +8,8 @@ class IPlaceDesign
 {
 public:
 	virtual void Place(uint32_t row, uint32_t column, QGraphicsRectItem* area) = 0;
-	virtual void Route(const std::vector<std::pair<QString, QString>>& ids) = 0;
-	virtual std::vector<std::pair<QString, QString>> Parse(QString&& text) = 0;
+	virtual void Route(const std::vector<std::vector<uint32_t>>& idsAdj) = 0;
+	virtual std::vector<std::vector<uint32_t>> Parse(QString&& text) = 0;
 	virtual std::vector<std::pair<uint32_t, uint32_t>> AreaGeneration() = 0;
 
 private:

@@ -538,21 +538,21 @@ void InterDigitation::on_Route_released()
 	QTextStream in(&file);
 	QString text = in.readAll();
 
-	std::vector<std::pair<QString, QString>> ids = Parse(std::move(text));
+	std::vector<std::vector<uint32_t>> ids = Parse(std::move(text));
 
 	Route(ids);
 }
 
-std::vector<std::pair<QString, QString>> InterDigitation::Parse(QString&& text)
+void InterDigitation::Route(const std::vector<std::vector<uint32_t>>& ids)
 {
 	// TODO
-
-	return std::vector<std::pair<QString, QString>>();
 }
 
-void InterDigitation::Route(const std::vector<std::pair<QString, QString>>& ids)
+std::vector<std::vector<uint32_t>> InterDigitation::Parse(QString&& text)
 {
 	// TODO
+
+	return std::vector<std::vector<uint32_t>>();
 }
 
 void InterDigitation::onInterDigitationChosen()

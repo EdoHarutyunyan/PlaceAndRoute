@@ -2,6 +2,7 @@
 #include "ui_Symmetric.h"
 
 #include <iostream>
+#include <list>
 #include <string>
 #include <sstream>
 #include <cassert>
@@ -46,7 +47,20 @@ Symmetric::Symmetric(QWidget *parent)
 	connect(m_routeButton, SIGNAL(released()), this, SLOT(on_Route_released()));
 }
 
+uint32_t GetIdNumberByString(const std::string& idString)
+{
+	std::stringstream idStream(idString);
+	uint32_t idNumber{};
+	idStream >> idNumber;
 
+	return idNumber;
+}
+
+void connectNodes(std::vector<std::vector<uint32_t>>& idsAdj, const int source, const int target)
+{
+	idsAdj[source].push_back(target);
+	idsAdj[target].push_back(source);
+}
 
 void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectItem* area)
 { 
@@ -232,22 +246,30 @@ void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectIt
 	m_scene->addItem(area);
 }
 
-std::vector<std::pair<QString, QString>> Symmetric::Parse(QString&& text)
+std::vector<std::vector<uint32_t>> Symmetric::Parse(QString&& text)
 {
-	std::vector<std::pair<QString, QString>> ids;
+	std::vector<std::vector<uint32_t>> idsAdj;
 	std::vector<std::string> tokens;
 	std::stringstream stream(text.toStdString());
 	std::string item;
 
 	while (std::getline(stream, item, ' '))
 	{
-		if (!item.empty())
+		if (item != "-")
 		{
 			tokens.push_back(item);
 		}
 	}
 
-	return ids;
+	for (size_t i = 0; i < tokens.size() - 1; ++i)
+	{
+		uint32_t source = GetIdNumberByString(tokens[i]);
+		uint32_t target = GetIdNumberByString(tokens[i + 1]);
+
+		connectNodes(idsAdj, source, target);
+	}
+
+	return idsAdj;
 }
 
 std::vector<std::string> Tokenize(std::string&& line)
@@ -260,20 +282,10 @@ std::vector<std::string> Tokenize(std::string&& line)
 	{
 		if (!item.empty())
 		{
-			if (item.back() == ',' || item.back() == ';')
+			if (item != "-")
 			{
-				item.pop_back();
-
-				if (item.back() == ')')
-				{
-					item.pop_back();
-				}
+				tokens.push_back(item);
 			}
-			if (item.front() == '(')
-			{
-				item = item.substr(1, item.size());
-			}
-			tokens.push_back(item);
 		}
 	}
 
@@ -586,15 +598,74 @@ void Symmetric::on_Route_released()
 	QTextStream in(&file);
 	QString text = in.readAll();
 
-	std::vector<std::pair<QString, QString>> ids = Parse(std::move(text));
+	std::vector<std::vector<uint32_t>> idsAdj = Parse(std::move(text));
 
-	Route(ids);
+	Route(idsAdj);
 }
 
-void Symmetric::Route(const std::vector<std::pair<QString, QString>>& ids)
+
+bool BFS(
+	const std::vector<std::vector<uint32_t>>& idsAdj,
+	const uint32_t source,
+	const uint32_t target,
+	std::vector<uint32_t>& predecessor,
+	std::vector<uint32_t>& distance)
+{
+	std::list<int> queue;
+	std::vector<bool> visited;
+	visited.resize(idsAdj.size());
+
+	for (int i = 0; i < idsAdj.size(); i++)
+	{
+		visited[i] = false;
+		distance[i] = INT_MAX;
+		predecessor[i] = -1;
+	}
+
+	visited[target] = true;
+	distance[target] = 0;
+	queue.push_back(target);
+
+	// standard BFS algorithm 
+	while (!queue.empty())
+	{
+		int u = queue.front();
+		queue.pop_front();
+		for (int i = 0; i < idsAdj[u].size(); i++)
+		{
+			if (visited[idsAdj[u][i]] == false)
+			{
+				visited[idsAdj[u][i]] = true;
+				distance[idsAdj[u][i]] = distance[u] + 1;
+				predecessor[idsAdj[u][i]] = u;
+				queue.push_back(idsAdj[u][i]);
+
+				if (idsAdj[u][i] == target)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 {
 	QList<QGraphicsItem*> items = m_scene->items();
 	QList<QGraphicsSimpleTextItem*> itemIds;
+	std::vector<std::vector<uint32_t>> graph;
+	std::vector<uint32_t> predecessor;
+	std::vector<uint32_t> distance;
+	predecessor.resize(idsAdj.size());
+	distance.resize(idsAdj.size());
+
+	auto cells = m_groupCells.GetCells();
+	auto it = cells.begin();
+
+	const uint32_t height = it->second.back().GetHeight();
+	const uint32_t width = it->second.back().GetWidth();
 
 	for (QGraphicsItem* item : items)
 	{
@@ -603,6 +674,66 @@ void Symmetric::Route(const std::vector<std::pair<QString, QString>>& ids)
 		if (id)
 		{
 			itemIds.push_back(id);
+		}
+	}
+
+	for (size_t i = 0; i < itemIds.size(); ++i)
+	{
+		QPoint currentPoint(itemIds[i]->pos().x(), itemIds[i]->pos().y());
+		
+		QPoint candidatePoint1(currentPoint.x() + width, currentPoint.y());
+		QPoint candidatePoint2(currentPoint.x() - width, currentPoint.y());
+		QPoint candidatePoint3(currentPoint.x(), currentPoint.y() + height);
+		QPoint candidatePoint4(currentPoint.x(), currentPoint.y() -height);
+
+		for (size_t j = 0; j < itemIds.size(); ++j)
+		{
+			if (i != j)
+			{
+				QPoint neighborPoint(itemIds[j]->pos().x(), itemIds[j]->pos().y());
+				
+				if (neighborPoint == candidatePoint1 ||
+					neighborPoint == candidatePoint2 ||
+					neighborPoint == candidatePoint3 ||
+					neighborPoint == candidatePoint4)
+				{
+					uint32_t source = GetIdNumberByString(itemIds[i]->text().toStdString());
+					uint32_t target = GetIdNumberByString(itemIds[j]->text().toStdString());
+					connectNodes(graph, source, target);
+				}
+			}
+		}
+	}
+
+	for (size_t i = 0; i < idsAdj.size(); ++i)
+	{
+		for (size_t j = 1; j < idsAdj[i].size(); ++j)
+		{
+			if (!BFS(graph, idsAdj[i][0], idsAdj[i][j], predecessor, distance))
+			{
+				// QMessageBox::warning(this, "Warning!", "Not elements to route!");
+				return;
+			}
+
+			std::vector<uint32_t> path;
+			int crawl = idsAdj[i][j];
+			path.push_back(crawl);
+
+			while (predecessor[crawl] != -1)
+			{
+				path.push_back(predecessor[crawl]);
+				crawl = predecessor[crawl];
+			}
+
+			for (size_t p = 0; p < predecessor.size() - 1; ++p)
+			{
+				QString idSource("Id" + predecessor[p]);
+				QString idTarget("Id" + predecessor[p + 1]);
+
+				//for (size_t v = 0; v < )
+				//	itemIds
+
+			}
 		}
 	}
 }
