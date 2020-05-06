@@ -143,6 +143,7 @@ void InterDigitation::Place(const uint32_t row, const uint32_t column, QGraphics
 			idItem->setPos(((rect->rect().topLeft() + rect->rect().topRight()) / 2, (rect->rect().topLeft() + rect->rect().bottomLeft()) / 2));
 		}
 
+		uint32_t i = 0;
 		while (!evenCells.empty())
 		{
 			std::pair<Cell::Type, uint32_t> currentCell = evenCells.back();
@@ -168,16 +169,17 @@ void InterDigitation::Place(const uint32_t row, const uint32_t column, QGraphics
 			{
 				if (row <= column)
 				{
-					rect1->setPos(QPoint((column / 2 * width), (j * height)) + QPoint(25, 25));
-					rect2->setPos(QPoint((column / 2 * width), (row - j - 1) * height) + QPoint(25, 25));
+					rect1->setPos(QPoint((column / 2 * width), ((i + j) * height)) + QPoint(25, 25));
+					rect2->setPos(QPoint((column / 2 * width), (row - j - i - 1) * height) + QPoint(25, 25));
 				}
 				else
 				{
-					rect1->setPos(QPoint((j * width), (row / 2) * height) + QPoint(25, 25));
-					rect2->setPos(QPoint(((column - j - 1) * width), (row / 2) * height) + QPoint(25, 25));
+					rect1->setPos(QPoint(((i + j) * width), (row / 2) * height) + QPoint(25, 25));
+					rect2->setPos(QPoint(((column - i - j - 1) * width), (row / 2) * height) + QPoint(25, 25));
 				}
 			}
 
+			++i;
 			evenCells.pop_back();
 		}
 	}
@@ -313,10 +315,14 @@ void InterDigitation::Initialize()
 	line->setFrameShape(QFrame::HLine); // Replace by VLine for vertical line
 	line->setFrameShadow(QFrame::Sunken);
 
+	QLabel* title = new QLabel("INTER-DIGITATION", this);
+	title->setStyleSheet("font: bold");
+	title->setStyleSheet("font-size: 20px");
+
 	// row0
 	int row = 0;
 	mainLayout->addWidget(m_backButton, row, 0, 1, 1);
-	mainLayout->addWidget(new QLabel("INTER-DIGITATION"), row, 1, 1, 4, Qt::AlignCenter);
+	mainLayout->addWidget(title, row, 1, 1, 4, Qt::AlignCenter);
 	++row;
 	// row1
 	mainLayout->addWidget(line, row, 0, 1, 5);
@@ -325,7 +331,6 @@ void InterDigitation::Initialize()
 	mainLayout->addWidget(m_detailsButton, row, 0, 1, 1);
 	++row;
 	// row3
-	//setContentMargin(0,0,0,0)
 	mainLayout->addWidget(m_typeLabel, row, 0, 1, 1, Qt::AlignCenter);
 	mainLayout->addWidget(m_countLabel, row, 1, 1, 1, Qt::AlignCenter);
 	mainLayout->addWidget(m_widthLabel, row, 2, 1, 1, Qt::AlignCenter);
@@ -359,6 +364,32 @@ void InterDigitation::Initialize()
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/yellow.png"), "yellow");
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/blue.jpg"), "blue");
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/red.jpg"), "red");
+
+	// Set labels alignments
+	m_countLineEdit->setAlignment(Qt::AlignRight);
+	m_widthLineEdit->setAlignment(Qt::AlignRight);
+	m_heightLineEdit->setAlignment(Qt::AlignRight);
+
+	SetStyleSheets();
+}
+
+void InterDigitation::SetStyleSheets()
+{
+	QPixmap pixmap(":/PlaceAndRouteDPGeneration/Resources/basket.png");
+	QIcon ButtonIcon(pixmap);
+	m_detailsButton->setIcon(ButtonIcon);
+	m_detailsButton->setIconSize(QSize(65, 65));
+
+	QPixmap bkgnd(":/PlaceAndRouteDPGeneration/Resources/background.jpg");
+	QPalette palette;
+	palette.setBrush(QPalette::Background, bkgnd);
+	this->setPalette(palette);
+
+	m_addButton->setStyleSheet("background-color: beige");
+	m_placeButton->setStyleSheet("background-color: beige");
+	m_routeButton->setStyleSheet("background-color: beige");
+	m_browseButton->setStyleSheet("background-color: beige");
+	m_backButton->setStyleSheet("background-color: #4682B4");
 }
 
 void InterDigitation::AddGroupCells(

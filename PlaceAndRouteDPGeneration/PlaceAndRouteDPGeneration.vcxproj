@@ -116,6 +116,8 @@
     <QtMoc Include="mainwindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Resources\background.jpg" />
+    <Image Include="Resources\basket.png" />
     <Image Include="Resources\blue.jpg" />
     <Image Include="Resources\green.png" />
     <Image Include="Resources\red.jpg" />

@@ -4,5 +4,7 @@
         <file>Resources/red.jpg</file>
         <file>Resources/blue.jpg</file>
         <file>Resources/yellow.png</file>
+        <file>Resources/basket.png</file>
+        <file>Resources/background.jpg</file>
     </qresource>
 </RCC>

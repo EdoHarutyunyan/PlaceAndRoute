@@ -20,7 +20,7 @@ Symmetric::Symmetric(QWidget *parent)
 	, m_graphicsView(new QGraphicsView(this))
 	, m_scene(new QGraphicsScene(this))
 	, m_backButton(new QPushButton("< Back", this))
-	, m_detailsButton(new QPushButton("Details", this))
+	, m_detailsButton(new QPushButton(this))
 	, m_addButton(new QPushButton("Add", this))
 	, m_browseButton(new QPushButton("Browse", this))
 	, m_placeButton(new QPushButton("Place", this))
@@ -51,6 +51,11 @@ uint32_t GetIdNumberByString(const std::string& idString)
 {
 	std::stringstream idStream(idString);
 	uint32_t idNumber{};
+	char first;
+	char second;
+
+	idStream >> first;
+	idStream >> second;
 	idStream >> idNumber;
 
 	return idNumber;
@@ -58,6 +63,7 @@ uint32_t GetIdNumberByString(const std::string& idString)
 
 void connectNodes(std::vector<std::vector<uint32_t>>& idsAdj, const int source, const int target)
 {
+	idsAdj.resize(100);
 	idsAdj[source].push_back(target);
 	idsAdj[target].push_back(source);
 }
@@ -261,7 +267,7 @@ std::vector<std::vector<uint32_t>> Symmetric::Parse(QString&& text)
 		}
 	}
 
-	for (size_t i = 0; i < tokens.size() - 1; ++i)
+	for (size_t i = 0; i < tokens.size() - 2; i += 2)
 	{
 		uint32_t source = GetIdNumberByString(tokens[i]);
 		uint32_t target = GetIdNumberByString(tokens[i + 1]);
@@ -380,10 +386,14 @@ void Symmetric::Initialize()
 	line->setFrameShape(QFrame::HLine); // Replace by VLine for vertical line
 	line->setFrameShadow(QFrame::Sunken);
 
+	QLabel* title = new QLabel("SYMMETRIC", this);
+	title->setStyleSheet("font: bold");
+	title->setStyleSheet("font-size: 20px");
+
 	// row0
 	int row = 0;
 	mainLayout->addWidget(m_backButton, row, 0, 1, 1);
-	mainLayout->addWidget(new QLabel("SYMMETRIC"), row, 1, 1, 4, Qt::AlignCenter);
+	mainLayout->addWidget(title, row, 1, 1, 4, Qt::AlignCenter);
 	++row;
 	// row1
 	mainLayout->addWidget(line, row, 0, 1, 5);
@@ -392,7 +402,6 @@ void Symmetric::Initialize()
 	mainLayout->addWidget(m_detailsButton, row, 0, 1, 1);
 	++row;
 	// row3
-	//setContentMargin(0,0,0,0)
 	mainLayout->addWidget(m_typeLabel, row, 0, 1, 1, Qt::AlignCenter);
 	mainLayout->addWidget(m_countLabel, row, 1, 1, 1, Qt::AlignCenter);
 	mainLayout->addWidget(m_widthLabel, row, 2, 1, 1, Qt::AlignCenter);
@@ -422,10 +431,37 @@ void Symmetric::Initialize()
 	showMaximized();
 	setWindowTitle("Symmetric");
 
+	// Initilize ComboBox 
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/green.png"), "green");
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/yellow.png"), "yellow");
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/blue.jpg"), "blue");
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/red.jpg"), "red");
+
+	// Set labels alignments
+	m_countLineEdit->setAlignment(Qt::AlignRight);
+	m_widthLineEdit->setAlignment(Qt::AlignRight);
+	m_heightLineEdit->setAlignment(Qt::AlignRight);
+
+	SetStyleSheets();
+}
+
+void Symmetric::SetStyleSheets()
+{
+	QPixmap pixmap(":/PlaceAndRouteDPGeneration/Resources/basket.png");
+	QIcon ButtonIcon(pixmap);
+	m_detailsButton->setIcon(ButtonIcon);
+	m_detailsButton->setIconSize(QSize(65, 65));
+
+	QPixmap bkgnd(":/PlaceAndRouteDPGeneration/Resources/background.jpg");
+	QPalette palette;
+	palette.setBrush(QPalette::Background, bkgnd);
+	this->setPalette(palette);
+
+	m_addButton->setStyleSheet("background-color: beige");
+	m_placeButton->setStyleSheet("background-color: beige");
+	m_routeButton->setStyleSheet("background-color: beige");
+	m_browseButton->setStyleSheet("background-color: beige");
+	m_backButton->setStyleSheet("background-color: #4682B4");
 }
 
 void Symmetric::AddGroupCells(
@@ -593,6 +629,7 @@ void Symmetric::on_Route_released()
 	if (!file.open(QFile::ReadOnly | QFile::Text))
 	{
 		QMessageBox::warning(this, "title", "file not opened");
+		return;
 	}
 
 	QTextStream in(&file);
@@ -605,7 +642,7 @@ void Symmetric::on_Route_released()
 
 
 bool BFS(
-	const std::vector<std::vector<uint32_t>>& idsAdj,
+	const std::vector<std::vector<uint32_t>>& graph,
 	const uint32_t source,
 	const uint32_t target,
 	std::vector<uint32_t>& predecessor,
@@ -613,9 +650,9 @@ bool BFS(
 {
 	std::list<int> queue;
 	std::vector<bool> visited;
-	visited.resize(idsAdj.size());
+	visited.resize(graph.size());
 
-	for (int i = 0; i < idsAdj.size(); i++)
+	for (int i = 0; i < graph.size(); i++)
 	{
 		visited[i] = false;
 		distance[i] = INT_MAX;
@@ -631,16 +668,16 @@ bool BFS(
 	{
 		int u = queue.front();
 		queue.pop_front();
-		for (int i = 0; i < idsAdj[u].size(); i++)
+		for (int i = 0; i < graph[u].size(); i++)
 		{
-			if (visited[idsAdj[u][i]] == false)
+			if (visited[graph[u][i]] == false)
 			{
-				visited[idsAdj[u][i]] = true;
-				distance[idsAdj[u][i]] = distance[u] + 1;
-				predecessor[idsAdj[u][i]] = u;
-				queue.push_back(idsAdj[u][i]);
+				visited[graph[u][i]] = true;
+				distance[graph[u][i]] = distance[u] + 1;
+				predecessor[graph[u][i]] = u;
+				queue.push_back(graph[u][i]);
 
-				if (idsAdj[u][i] == target)
+				if (graph[u][i] == target)
 				{
 					return true;
 				}
@@ -679,8 +716,10 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 
 	for (size_t i = 0; i < itemIds.size(); ++i)
 	{
-		QPoint currentPoint(itemIds[i]->pos().x(), itemIds[i]->pos().y());
+		QPoint currentPoint(itemIds[i]->boundingRect().center().x(), itemIds[i]->boundingRect().center().y());
 		
+		/*itemIds[i]->boundingRect().center()*/
+
 		QPoint candidatePoint1(currentPoint.x() + width, currentPoint.y());
 		QPoint candidatePoint2(currentPoint.x() - width, currentPoint.y());
 		QPoint candidatePoint3(currentPoint.x(), currentPoint.y() + height);
@@ -734,6 +773,9 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 				//	itemIds
 
 			}
+
+			predecessor.clear();
+			distance.clear();
 		}
 	}
 }
