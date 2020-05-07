@@ -6,5 +6,8 @@
         <file>Resources/yellow.png</file>
         <file>Resources/basket.png</file>
         <file>Resources/background.jpg</file>
+        <file>Resources/interdigitation.png</file>
+        <file>Resources/symmetric.png</file>
+        <file>Resources/UserGenerated.jpg</file>
     </qresource>
 </RCC>

@@ -1,5 +1,4 @@
 #include "InterDigitation.h"
-#include "ui_InterDigitation.h"
 
 #include <iostream>
 #include <string>
@@ -10,6 +9,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QGraphicsSimpleTextItem>
+#include <QGridLayout>
 
 InterDigitation::InterDigitation(QWidget* parent)
 	: QWidget(parent)

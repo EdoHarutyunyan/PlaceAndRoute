@@ -1,5 +1,4 @@
 #include "Symmetric.h"
-#include "ui_Symmetric.h"
 
 #include <iostream>
 #include <list>
@@ -11,6 +10,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QGraphicsSimpleTextItem>
+#include <QGridLayout>
 
 #include <QLine>
 #include <QSpacerItem>
@@ -61,11 +61,32 @@ uint32_t GetIdNumberByString(const std::string& idString)
 	return idNumber;
 }
 
-void connectNodes(std::vector<std::vector<uint32_t>>& idsAdj, const int source, const int target)
+QString GetIdStringByNumber(const uint32_t idNumber)
 {
-	idsAdj.resize(100);
-	idsAdj[source].push_back(target);
-	idsAdj[target].push_back(source);
+	std::string idString = "Id" + std::to_string(idNumber);
+
+	return QString::fromStdString(idString);
+}
+
+void connectNodes(std::vector<std::vector<uint32_t>>& graph, const int source, const int target)
+{
+	for (size_t i = 0; i < graph[source].size(); ++i)
+	{
+		if (target == graph[source][i])
+		{
+			return;
+		}
+	}
+	for (size_t i = 0; i < graph[target].size(); ++i)
+	{
+		if (target == graph[target][i])
+		{
+			return;
+		}
+	}
+
+	graph[source].push_back(target);
+	graph[target].push_back(source);
 }
 
 void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectItem* area)
@@ -255,6 +276,7 @@ void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectIt
 std::vector<std::vector<uint32_t>> Symmetric::Parse(QString&& text)
 {
 	std::vector<std::vector<uint32_t>> idsAdj;
+	idsAdj.resize(100);
 	std::vector<std::string> tokens;
 	std::stringstream stream(text.toStdString());
 	std::string item;
@@ -267,14 +289,23 @@ std::vector<std::vector<uint32_t>> Symmetric::Parse(QString&& text)
 		}
 	}
 
-	for (size_t i = 0; i < tokens.size() - 2; i += 2)
+	if (tokens.size() > 2)
 	{
-		uint32_t source = GetIdNumberByString(tokens[i]);
-		uint32_t target = GetIdNumberByString(tokens[i + 1]);
+		for (size_t i = 0; i < tokens.size() - 2; i += 2)
+		{
+			uint32_t source = GetIdNumberByString(tokens[i]);
+			uint32_t target = GetIdNumberByString(tokens[i + 1]);
+
+			connectNodes(idsAdj, source, target);
+		}
+	}
+	else
+	{
+		uint32_t source = GetIdNumberByString(tokens[0]);
+		uint32_t target = GetIdNumberByString(tokens[1]);
 
 		connectNodes(idsAdj, source, target);
 	}
-
 	return idsAdj;
 }
 
@@ -562,6 +593,7 @@ void Symmetric::on_Place_released()
 	else
 	{
 		QMessageBox::warning(this, "Warning!", "Please choose symmetry line");
+		return;
 	}
 
 	std::vector<std::pair<uint32_t /*row*/, uint32_t /*column*/>> areaSizes = AreaGeneration();
@@ -659,9 +691,9 @@ bool BFS(
 		predecessor[i] = -1;
 	}
 
-	visited[target] = true;
-	distance[target] = 0;
-	queue.push_back(target);
+	visited[source] = true;
+	distance[source] = 0;
+	queue.push_back(source);
 
 	// standard BFS algorithm 
 	while (!queue.empty())
@@ -692,7 +724,6 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 {
 	QList<QGraphicsItem*> items = m_scene->items();
 	QList<QGraphicsSimpleTextItem*> itemIds;
-	std::vector<std::vector<uint32_t>> graph;
 	std::vector<uint32_t> predecessor;
 	std::vector<uint32_t> distance;
 	predecessor.resize(idsAdj.size());
@@ -714,23 +745,47 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 		}
 	}
 
+	std::vector<std::vector<uint32_t>> graph;
+	graph.resize(itemIds.size());
+
+	QVector<QPointF> parentCenters;
+	parentCenters.resize(itemIds.size());
+
 	for (size_t i = 0; i < itemIds.size(); ++i)
 	{
-		QPoint currentPoint(itemIds[i]->boundingRect().center().x(), itemIds[i]->boundingRect().center().y());
-		
-		/*itemIds[i]->boundingRect().center()*/
+		auto currentParent = itemIds[i]->parentItem();
 
-		QPoint candidatePoint1(currentPoint.x() + width, currentPoint.y());
-		QPoint candidatePoint2(currentPoint.x() - width, currentPoint.y());
-		QPoint candidatePoint3(currentPoint.x(), currentPoint.y() + height);
-		QPoint candidatePoint4(currentPoint.x(), currentPoint.y() -height);
+		QGraphicsRectItem* currentParentRect = qgraphicsitem_cast<QGraphicsRectItem*>(currentParent);
+
+		if (currentParentRect == nullptr)
+		{
+			return;
+		}
+
+		QPointF currentPoint = currentParent->pos();
+
+		parentCenters[i] = currentPoint;
+
+		QPointF candidatePoint1(currentPoint.x() + width, currentPoint.y());
+		QPointF candidatePoint2(currentPoint.x() - width, currentPoint.y());
+		QPointF candidatePoint3(currentPoint.x(), currentPoint.y() + height);
+		QPointF candidatePoint4(currentPoint.x(), currentPoint.y() - height);
 
 		for (size_t j = 0; j < itemIds.size(); ++j)
 		{
 			if (i != j)
 			{
-				QPoint neighborPoint(itemIds[j]->pos().x(), itemIds[j]->pos().y());
-				
+				auto otherParent = itemIds[j]->parentItem();
+
+				QGraphicsRectItem* otherParentRect = dynamic_cast<QGraphicsRectItem*>(otherParent);
+
+				if (otherParentRect == nullptr)
+				{
+					return;
+				}
+
+				QPointF neighborPoint(otherParentRect->pos());
+
 				if (neighborPoint == candidatePoint1 ||
 					neighborPoint == candidatePoint2 ||
 					neighborPoint == candidatePoint3 ||
@@ -741,21 +796,22 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 					connectNodes(graph, source, target);
 				}
 			}
+
 		}
 	}
 
 	for (size_t i = 0; i < idsAdj.size(); ++i)
 	{
-		for (size_t j = 1; j < idsAdj[i].size(); ++j)
+		for (size_t j = 1; j <= idsAdj[i].size(); ++j)
 		{
-			if (!BFS(graph, idsAdj[i][0], idsAdj[i][j], predecessor, distance))
+			if (!BFS(graph, i, idsAdj[i][j - 1], predecessor, distance))
 			{
 				// QMessageBox::warning(this, "Warning!", "Not elements to route!");
 				return;
 			}
 
 			std::vector<uint32_t> path;
-			int crawl = idsAdj[i][j];
+			int crawl = idsAdj[i][j - 1];
 			path.push_back(crawl);
 
 			while (predecessor[crawl] != -1)
@@ -764,18 +820,37 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 				crawl = predecessor[crawl];
 			}
 
-			for (size_t p = 0; p < predecessor.size() - 1; ++p)
+			for (size_t p = 0; p < path.size() - 1; ++p)
 			{
-				QString idSource("Id" + predecessor[p]);
-				QString idTarget("Id" + predecessor[p + 1]);
+				QPointF sourcePoint(0, 0);
+				QPointF targetPoint(0, 0);
 
-				//for (size_t v = 0; v < )
-				//	itemIds
+				QString idSource = GetIdStringByNumber(path[p]);
+				QString idTarget = GetIdStringByNumber(path[p + 1]);
 
+				for (size_t i = 0; i < itemIds.size(); ++i)
+				{
+					if (itemIds[i]->text() == idSource)
+					{
+						sourcePoint = parentCenters[i];
+					}
+					else if (itemIds[i]->text() == idTarget)
+					{
+						targetPoint = parentCenters[i];
+					}
+				}
+
+				QLineF line(sourcePoint, targetPoint);
+				m_scene->addLine(line, QPen(Qt::red));
 			}
 
-			predecessor.clear();
+			path.clear();
 			distance.clear();
+			predecessor.clear();
+			break;
 		}
+		break;
 	}
+
+	m_graphicsView->setScene(m_scene);
 }

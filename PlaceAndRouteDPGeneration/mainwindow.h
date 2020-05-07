@@ -2,13 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPushButton>
 
 class Symmetric;
 class InterDigitation;
-class MinimumArea;
-class Temperature;
-
-namespace Ui { class MainWindow; }
+class UserGeneratedPattern;
 
 class MainWindow : public QMainWindow
 {
@@ -16,26 +14,28 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+	~MainWindow() = default;
 
 signals:
     void SymmetricChosen();
     void InterDigitationChosen();
     void MinimumAreaChosen();
-    void TemperatureChosen();
 
 private slots:
     void on_symmetric_released();
-    void on_interDegitation_released();
-    void on_minimumArea_released();
-    void on_temperature_released();
+	void on_interDegitation_released();
+    void on_userGeneratedPattern_released();
 
 private:
-    Ui::MainWindow *ui;
+	void Initialize();
 
+private:
     Symmetric* m_symmetric;
     InterDigitation* m_interDigitation;
-    MinimumArea* m_minimumArea;
-    Temperature* m_temperature;
+	UserGeneratedPattern* m_userGeneratedPattern;
+
+	QPushButton* m_symmetricButton;
+	QPushButton* m_interDigitationButton;
+	QPushButton* m_userGeneratedPatternButton;
 };
 #endif // MAINWINDOW_H

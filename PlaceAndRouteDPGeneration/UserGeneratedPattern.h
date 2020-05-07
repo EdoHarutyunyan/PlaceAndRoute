@@ -1,6 +1,4 @@
-#ifndef Symmetric_H
-#define Symmetric_H
-
+#pragma once
 #include "IPlaceDesign.h"
 #include "IRoute.h"
 
@@ -12,68 +10,59 @@
 #include <QComboBox>
 #include <QRadioButton>
 #include <QLineEdit>
+#include <QPixmap>
 
-class Symmetric : public QWidget, public IPlaceDesign, public IRoute
+class UserGeneratedPattern : public QWidget, public IPlaceDesign, public IRoute
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit Symmetric(QWidget *parent = nullptr);
-	~Symmetric() = default;
-
-	enum class SymmetryLine : bool
-	{
-		Horizontal = 0,
-		Vertical = 1
-	};
+	explicit UserGeneratedPattern(QWidget* parent = nullptr);
+	~UserGeneratedPattern() = default;
 
 	void Place(uint32_t row, uint32_t column, QGraphicsRectItem* area) override;
 	void Route(const std::vector<std::vector<uint32_t>>& idsAdj) override;
 	std::vector<std::vector<uint32_t>> Parse(QString&& text) override;
 	std::vector<std::pair<uint32_t, uint32_t>> AreaGeneration() override;
 
-	void SetSymmetryLine(SymmetryLine symmetryLine);
-	SymmetryLine GetSymmetryLine() const;
-
 private:
 	void Initialize();
 	void SetStyleSheets();
-	void AddGroupCells(Cell::Type type, uint32_t count, uint32_t width, uint32_t height);
 	Qt::GlobalColor GetGlobalColorByType(Cell::Type type) const;
 
 public slots:
-    void onSymmetricChosen();
+	void onUserGeneratedPatternChosen();
 
 private slots:
-	void on_Add_released();
 	void on_Back_released();
 	void on_Browse_released();
 	void on_Details_released();
 	void on_Place_released();
 	void on_Route_released();
+	//void on_currentIndexChanged(const QString& text);
 
 private:
-	SymmetryLine m_symmetryLine;
+	QString GetPatternPicPath(const QString& boxText);
 
+private:
 	QGraphicsView* m_graphicsView;
 	QGraphicsScene* m_scene;
 	QPushButton* m_backButton;
 	QPushButton* m_detailsButton;
-	QPushButton* m_addButton;
 	QPushButton* m_browseButton;
 	QPushButton* m_placeButton;
 	QPushButton* m_routeButton;
-	QLabel* m_typeLabel;
-	QLabel* m_countLabel;
-	QLabel* m_widthLabel;
-	QLabel* m_heightLabel;
-	QComboBox* m_typeComboBox;
-	QRadioButton* m_horizontalRadioButton;
-	QRadioButton* m_verticalRadioButton;
-	QLineEdit* m_countLineEdit;
-	QLineEdit* m_widthLineEdit;
-	QLineEdit* m_heightLineEdit;
 	QLineEdit* m_browseLineEdit;
+	QLineEdit* m_rowFactorLineEdit;
+	QLineEdit* m_columnFactorLineEdit;
+	QLabel* m_rowFactorLabel;
+	QLabel* m_columnFactorLabel;
+	QComboBox* m_topLeftComboBox;
+	QComboBox* m_topRightComboBox;
+	QComboBox* m_bottomLeftComboBox;
+	QComboBox* m_bottomRightComboBox;
+	QPixmap m_topLeftPic;
+	QPixmap m_topRightPic;
+	QPixmap m_bottomLeftPic;
+	QPixmap m_bottomRightPic;
 };
-
-#endif // Symmetric_H

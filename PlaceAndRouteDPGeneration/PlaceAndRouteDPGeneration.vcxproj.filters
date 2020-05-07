@@ -31,13 +31,7 @@
     <ClCompile Include="InterDigitation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MinimumArea.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Symmetric.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Temperature.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mainwindow.cpp">
@@ -52,15 +46,12 @@
     <ClCompile Include="GroupCells.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UserGeneratedPattern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="MinimumArea.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="Symmetric.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Temperature.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="mainwindow.h">
@@ -69,23 +60,9 @@
     <QtMoc Include="InterDigitation.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <QtUic Include="InterDigitation.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="MinimumArea.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="Symmetric.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="Temperature.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="mainwindow.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
+    <QtMoc Include="UserGeneratedPattern.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="PlaceAndRouteDPGeneration.qrc">
@@ -111,6 +88,15 @@
     <Image Include="Resources\background.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Resources\interdigitation.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\symmetric.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\UserGenerated.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -126,6 +112,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GroupCells.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IRoute.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

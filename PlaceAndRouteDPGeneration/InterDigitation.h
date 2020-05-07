@@ -2,16 +2,18 @@
 #define INTERDIGITATION_H
 
 #include "IPlaceDesign.h"
+#include "IRoute.h"
 
 #include <QWidget>
 #include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QPushButton>
 #include <QLabel>
 #include <QComboBox>
 #include <QRadioButton>
 #include <QLineEdit>
 
-class InterDigitation : public QWidget, public IPlaceDesign
+class InterDigitation : public QWidget, public IPlaceDesign, public IRoute
 {
     Q_OBJECT
 
@@ -36,7 +38,7 @@ public:
 private:
 	void Initialize();
 	void SetStyleSheets();
-	void AddGroupCells(Cell::Type type, uint32_t count, uint32_t width, uint32_t height) override;
+	void AddGroupCells(Cell::Type type, uint32_t count, uint32_t width, uint32_t height);
 	Qt::GlobalColor GetGlobalColorByType(Cell::Type type) const;
 
 public slots:

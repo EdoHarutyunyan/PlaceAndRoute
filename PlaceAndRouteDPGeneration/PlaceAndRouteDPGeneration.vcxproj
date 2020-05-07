@@ -85,17 +85,9 @@
     <ClCompile Include="InterDigitation.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
-    <ClCompile Include="MinimumArea.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Symmetric.cpp" />
-    <ClCompile Include="Temperature.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtUic Include="InterDigitation.ui" />
-    <QtUic Include="mainwindow.ui" />
-    <QtUic Include="MinimumArea.ui" />
-    <QtUic Include="Symmetric.ui" />
-    <QtUic Include="Temperature.ui" />
+    <ClCompile Include="UserGeneratedPattern.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="PlaceAndRouteDPGeneration.qrc" />
@@ -104,13 +96,7 @@
     <QtMoc Include="InterDigitation.h" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="MinimumArea.h" />
-  </ItemGroup>
-  <ItemGroup>
     <QtMoc Include="Symmetric.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="Temperature.h" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="mainwindow.h" />
@@ -120,15 +106,20 @@
     <Image Include="Resources\basket.png" />
     <Image Include="Resources\blue.jpg" />
     <Image Include="Resources\green.png" />
+    <Image Include="Resources\interdigitation.png" />
     <Image Include="Resources\red.jpg" />
+    <Image Include="Resources\symmetric.png" />
+    <Image Include="Resources\UserGenerated.jpg" />
     <Image Include="Resources\yellow.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cell.h" />
     <ClInclude Include="GroupCells.h" />
     <ClInclude Include="IPlaceDesign.h" />
+    <ClInclude Include="IRoute.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="resource.h" />
+    <QtMoc Include="UserGeneratedPattern.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PlaceAndRouteDPGeneration.rc" />
