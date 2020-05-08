@@ -28,7 +28,9 @@ public:
 private:
 	void Initialize();
 	void SetStyleSheets();
-	Qt::GlobalColor GetGlobalColorByType(Cell::Type type) const;
+	QString GetPatternPicPath(const QString& boxText);
+	Qt::GlobalColor GetColorByText(const QString& boxText);
+	Qt::GlobalColor GetColorByIndex(uint32_t i, uint32_t j);
 
 public slots:
 	void onUserGeneratedPatternChosen();
@@ -39,10 +41,6 @@ private slots:
 	void on_Details_released();
 	void on_Place_released();
 	void on_Route_released();
-	//void on_currentIndexChanged(const QString& text);
-
-private:
-	QString GetPatternPicPath(const QString& boxText);
 
 private:
 	QGraphicsView* m_graphicsView;
@@ -61,6 +59,10 @@ private:
 	QComboBox* m_topRightComboBox;
 	QComboBox* m_bottomLeftComboBox;
 	QComboBox* m_bottomRightComboBox;
+	QLabel* m_topLeftLabel;
+	QLabel* m_topRightLabel;
+	QLabel* m_bottomLeftLabel;
+	QLabel* m_bottomRightLabel;
 	QPixmap m_topLeftPic;
 	QPixmap m_topRightPic;
 	QPixmap m_bottomLeftPic;

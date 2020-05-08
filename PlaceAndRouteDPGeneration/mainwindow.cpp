@@ -39,12 +39,12 @@ void MainWindow::Initialize()
 	QPixmap pixmap2(":/PlaceAndRouteDPGeneration/Resources/interdigitation.png");
 	QIcon ButtonIcon2(pixmap2);
 	m_interDigitationButton->setIcon(ButtonIcon2);
-	m_interDigitationButton->setIconSize(pixmap2.rect().size());
+	m_interDigitationButton->setIconSize(pixmap.rect().size());
 
 	QPixmap pixmap3(":/PlaceAndRouteDPGeneration/Resources/UserGenerated.jpg");
 	QIcon ButtonIcon3(pixmap3);
 	m_userGeneratedPatternButton->setIcon(ButtonIcon3);
-	m_userGeneratedPatternButton->setIconSize(pixmap3.rect().size());
+	m_userGeneratedPatternButton->setIconSize(pixmap.rect().size());
 
 	QPixmap bkgnd(":/PlaceAndRouteDPGeneration/Resources/background.jpg");
 	QPalette palette;

@@ -9,6 +9,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QGridLayout>
+#include <QApplication>
 #include <QGraphicsSimpleTextItem>
 
 namespace
@@ -37,6 +38,10 @@ UserGeneratedPattern::UserGeneratedPattern(QWidget* parent)
 	, m_topRightComboBox(new QComboBox(this))
 	, m_bottomLeftComboBox(new QComboBox(this))
 	, m_bottomRightComboBox(new QComboBox(this))
+	, m_topLeftLabel(new QLabel(this))
+	, m_topRightLabel(new QLabel(this))
+	, m_bottomLeftLabel(new QLabel(this))
+	, m_bottomRightLabel(new QLabel(this))
 	, m_topLeftPic(greenPath)
 	, m_topRightPic(bluePath)
 	, m_bottomLeftPic(yellowPath)
@@ -46,23 +51,53 @@ UserGeneratedPattern::UserGeneratedPattern(QWidget* parent)
 
 	connect(m_backButton, SIGNAL(released()), this, SLOT(on_Back_released()));
 	connect(m_browseButton, SIGNAL(released()), this, SLOT(on_Browse_released()));
-	connect(m_detailsButton, SIGNAL(released()), this, SLOT(\on_Details_released()));
+	connect(m_detailsButton, SIGNAL(released()), this, SLOT(on_Details_released()));
 	connect(m_placeButton, SIGNAL(released()), this, SLOT(on_Place_released()));
 	connect(m_routeButton, SIGNAL(released()), this, SLOT(on_Route_released()));
 
 	connect(m_topLeftComboBox, QOverload<const QString&>::of(&QComboBox::currentIndexChanged),
-		[=](const QString& text) { m_topLeftPic.load(GetPatternPicPath(text)); });
+		[=](const QString& text) 
+		{ 
+			if (m_topLeftPic.load(GetPatternPicPath(text))) { m_topLeftLabel->setPixmap(m_topLeftPic); }
+		});
 	connect(m_topRightComboBox, QOverload<const QString&>::of(&QComboBox::currentIndexChanged),
-		[=](const QString& text) { m_topRightPic.load(GetPatternPicPath(text)); });
+		[=](const QString& text)
+		{
+			if (m_topRightPic.load(GetPatternPicPath(text))) { m_topRightLabel->setPixmap(m_topRightPic);}
+		});
 	connect(m_bottomLeftComboBox, QOverload<const QString&>::of(&QComboBox::currentIndexChanged),
-		[=](const QString& text) { m_bottomLeftPic.load(GetPatternPicPath(text)); });
+		[=](const QString& text)
+		{
+			if (m_bottomLeftPic.load(GetPatternPicPath(text))) { m_bottomLeftLabel->setPixmap(m_bottomLeftPic);}
+		});
 	connect(m_bottomRightComboBox, QOverload<const QString&>::of(&QComboBox::currentIndexChanged),
-		[=](const QString& text) { m_bottomRightPic.load(GetPatternPicPath(text)); });
+		[=](const QString& text)
+		{
+			if (m_bottomRightPic.load(GetPatternPicPath(text))) { m_bottomRightLabel->setPixmap(m_bottomRightPic); }
+		});
 }
 
 void UserGeneratedPattern::Place(const uint32_t row, const uint32_t column, QGraphicsRectItem* area)
 {
+	static uint32_t idNumber = 0U;
+	constexpr uint32_t width = 50;
+	constexpr uint32_t height = 50;
 
+	for (size_t i = 0; i < row; ++i)
+	{
+		for (size_t j = 0; j < row; ++j)
+		{
+			QGraphicsRectItem* rect = new QGraphicsRectItem(0, 0, width, height, area);
+
+			rect->setPen(QPen(Qt::black));
+			rect->setBrush(QBrush(GetColorByIndex(i, j)));
+
+			QString id = QString::fromStdString("Id" + std::to_string(idNumber++));
+
+			QGraphicsSimpleTextItem* idItem = new QGraphicsSimpleTextItem(id, rect);
+			idItem->setPos(((rect->rect().topLeft() + rect->rect().topRight()) / 2, (rect->rect().topLeft() + rect->rect().bottomLeft()) / 2));
+		}
+	}
 }
 
 void UserGeneratedPattern::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
@@ -94,64 +129,65 @@ void UserGeneratedPattern::Initialize()
 
 	// row0
 	int row = 0;
-	mainLayout->addWidget(m_backButton, row, 0, 1, 1);
+	mainLayout->addWidget(m_backButton, row, 0);
 	mainLayout->addWidget(title, row, 1, 1, 4, Qt::AlignCenter);
 	++row;
 	// row1
 	mainLayout->addWidget(line, row, 0, 1, 5);
 	++row;
 	// row2
-	mainLayout->addWidget(m_detailsButton, row, 0, 1, 1);
+	mainLayout->addWidget(m_detailsButton, row, 0);
 	++row;
 	// row3
-	mainLayout->addWidget(new QLabel("Top left", this), row, 1, 1, 1, Qt::AlignCenter);
-	mainLayout->addWidget(new QLabel("Top right", this), row, 2, 1, 1, Qt::AlignCenter);
-	mainLayout->addWidget(new QLabel("Bottom left", this), row, 3, 1, 1, Qt::AlignCenter);
-	mainLayout->addWidget(new QLabel("Bottom right", this), row, 4, 1, 1, Qt::AlignCenter);
+	mainLayout->addWidget(new QLabel("Top left", this), row, 1, Qt::AlignCenter);
+	mainLayout->addWidget(new QLabel("Top right", this), row, 2, Qt::AlignCenter);
+	mainLayout->addWidget(new QLabel("Bottom left", this), row, 3, Qt::AlignCenter);
+	mainLayout->addWidget(new QLabel("Bottom right", this), row, 4, Qt::AlignCenter);
 
 	++row;
 	// row4
-	mainLayout->addWidget(m_topLeftComboBox, row, 1, 1, 1);
-	mainLayout->addWidget(m_topRightComboBox, row, 2, 1, 1);
-	mainLayout->addWidget(m_bottomLeftComboBox, row, 3, 1, 1);
-	mainLayout->addWidget(m_bottomRightComboBox, row, 4, 1, 1);
+	mainLayout->addWidget(m_topLeftComboBox, row, 1);
+	mainLayout->addWidget(m_topRightComboBox, row, 2);
+	mainLayout->addWidget(m_bottomLeftComboBox, row, 3);
+	mainLayout->addWidget(m_bottomRightComboBox, row, 4);
 
 	QGridLayout* patternLayout = new QGridLayout();
-	QLabel* topLeftLabel = new QLabel(this);
-	QLabel* topRightLabel = new QLabel(this);
-	QLabel* bottomLeftLabel = new QLabel(this);
-	QLabel* bottomRightLabel = new QLabel(this);
 
-	topLeftLabel->setPixmap(m_topLeftPic);
-	topRightLabel->setPixmap(m_topRightPic);
-	bottomLeftLabel->setPixmap(m_bottomLeftPic);
-	bottomRightLabel->setPixmap(m_bottomRightPic);
+	m_topLeftLabel->setFixedSize(200, 200);
+	m_topRightLabel->setFixedSize(200, 200);
+	m_bottomLeftLabel->setFixedSize(200, 200);
+	m_bottomRightLabel->setFixedSize(200, 200);
 
-	patternLayout->addWidget(topLeftLabel, 0, 0, 1, 1);
-	patternLayout->addWidget(topRightLabel, 0, 1, 1, 1);
-	patternLayout->addWidget(bottomLeftLabel, 1, 0, 1, 1);
-	patternLayout->addWidget(bottomRightLabel, 1, 1, 1, 1);
+	m_topLeftLabel->setPixmap(m_topLeftPic);
+	m_topRightLabel->setPixmap(m_topRightPic);
+	m_bottomLeftLabel->setPixmap(m_bottomLeftPic);
+	m_bottomRightLabel->setPixmap(m_bottomRightPic);
+
+	patternLayout->addWidget(m_topLeftLabel, 0, 0);
+	patternLayout->addWidget(m_topRightLabel, 0, 1);
+	patternLayout->addWidget(m_bottomLeftLabel, 1, 0);
+	patternLayout->addWidget(m_bottomRightLabel, 1, 1);
 
 	// row4,5
-	mainLayout->addLayout(patternLayout, row, 6, 2, 2);
+	mainLayout->addLayout(patternLayout, row, 5, 2, 2);
 
 	row += 2;
 	// row6
-	mainLayout->addWidget(m_rowFactorLabel, row, 1, 1, 1);
-	mainLayout->addWidget(m_rowFactorLineEdit, row, 2, 1, 1, Qt::AlignLeft);
+	mainLayout->addWidget(m_rowFactorLabel, row, 1);
+	mainLayout->addWidget(m_rowFactorLineEdit, row, 2, Qt::AlignLeft);
 
 	++row;
 	// row7
-	mainLayout->addWidget(m_rowFactorLabel, row, 1, 1, 1);
-	mainLayout->addWidget(m_rowFactorLineEdit, row, 2, 1, 1, Qt::AlignLeft);
-	mainLayout->addWidget(m_browseButton, row, 3, 1, 1);
-	mainLayout->addWidget(m_browseLineEdit, row, 4, 1, 1);
+	mainLayout->addWidget(m_columnFactorLabel, row, 1);
+	mainLayout->addWidget(m_columnFactorLineEdit, row, 2, Qt::AlignLeft);
+	mainLayout->addWidget(m_browseButton, row, 3, Qt::AlignRight);
+	mainLayout->addWidget(m_browseLineEdit, row, 4, Qt::AlignLeft);
 
 	++row;
 	// row8-15
-	mainLayout->addWidget(m_graphicsView, row, 0, 8, 8);
-	mainLayout->addWidget(m_placeButton, 14, 9, 1, 1);
-	mainLayout->addWidget(m_routeButton, 15, 9, 1, 1);
+	mainLayout->addWidget(m_graphicsView, row, 0, 8, 7);
+	mainLayout->addWidget(m_placeButton, 14, 9);
+	mainLayout->addWidget(m_routeButton, 15, 9);
 
 	setLayout(mainLayout);
 
@@ -181,7 +217,6 @@ void UserGeneratedPattern::Initialize()
 	SetStyleSheets();
 }
 
-
 void UserGeneratedPattern::SetStyleSheets()
 {
 	QPixmap pixmap(":/PlaceAndRouteDPGeneration/Resources/basket.png");
@@ -198,32 +233,6 @@ void UserGeneratedPattern::SetStyleSheets()
 	m_routeButton->setStyleSheet("background-color: beige");
 	m_browseButton->setStyleSheet("background-color: beige");
 	m_backButton->setStyleSheet("background-color: #4682B4");
-}
-
-Qt::GlobalColor UserGeneratedPattern::GetGlobalColorByType(const Cell::Type type) const
-{
-	Qt::GlobalColor color{};
-
-	switch (type)
-	{
-	case Cell::Type::Green:
-		color = Qt::GlobalColor::green;
-		break;
-	case Cell::Type::Yellow:
-		color = Qt::GlobalColor::yellow;
-		break;
-	case Cell::Type::Blue:
-		color = Qt::GlobalColor::blue;
-		break;
-	case Cell::Type::Red:
-		color = Qt::GlobalColor::red;
-		break;
-	default:
-		assert(false);
-		break;
-	}
-
-	return color;
 }
 
 void UserGeneratedPattern::on_Back_released()
@@ -258,10 +267,6 @@ void UserGeneratedPattern::on_Place_released()
 	m_graphicsView->setScene(m_scene);
 }
 
-void UserGeneratedPattern::on_Route_released()
-{
-}
-
 QString UserGeneratedPattern::GetPatternPicPath(const QString& boxText)
 {
 	if (boxText == "green")
@@ -280,6 +285,69 @@ QString UserGeneratedPattern::GetPatternPicPath(const QString& boxText)
 	{
 		return bluePath;
 	}
+
+	return{};
+}
+
+Qt::GlobalColor UserGeneratedPattern::GetColorByIndex(const uint32_t i, const uint32_t j)
+{
+	const auto topLeftText = m_topLeftComboBox->currentText();
+	const auto topRightText = m_topRightComboBox->currentText();
+	const auto bottomLeftText = m_bottomLeftComboBox->currentText();
+	const auto bottomRightText = m_bottomRightComboBox->currentText();
+
+	Qt::GlobalColor color{};
+
+	if (i % 2 == 0)
+	{
+		if (j % 2 == 0)
+		{
+			color = GetColorByText(m_topLeftComboBox->currentText());
+		}
+		else
+		{
+			color = GetColorByText(m_topRightComboBox->currentText());
+		}
+	}
+	else 
+	{
+		if (j % 2 == 0)
+		{
+			color = GetColorByText(m_bottomLeftComboBox->currentText());
+		}
+		else
+		{
+			color = GetColorByText(m_bottomRightComboBox->currentText());
+		}
+	}
+
+	return color;
+}
+
+Qt::GlobalColor UserGeneratedPattern::GetColorByText(const QString& boxText)
+{
+	if (boxText == "green")
+	{
+		return Qt::GlobalColor::green;
+	}
+	if (boxText == "yellow")
+	{
+		return Qt::GlobalColor::yellow;
+	}
+	if (boxText == "red")
+	{
+		return Qt::GlobalColor::red;
+	}
+	if (boxText == "blue")
+	{
+		return Qt::GlobalColor::blue;
+	}
+
+	return{};
+}
+
+void UserGeneratedPattern::on_Route_released()
+{
 }
 
 

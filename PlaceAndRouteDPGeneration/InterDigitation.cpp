@@ -38,7 +38,7 @@ InterDigitation::InterDigitation(QWidget* parent)
 	connect(m_addButton, SIGNAL(released()), this, SLOT(on_Add_released()));
 	connect(m_backButton, SIGNAL(released()), this, SLOT(on_Back_released()));
 	connect(m_browseButton, SIGNAL(released()), this, SLOT(on_Browse_released()));
-	connect(m_detailsButton, SIGNAL(released()), this, SLOT(\on_Details_released()));
+	connect(m_detailsButton, SIGNAL(released()), this, SLOT(on_Details_released()));
 	connect(m_placeButton, SIGNAL(released()), this, SLOT(on_Place_released()));
 	connect(m_routeButton, SIGNAL(released()), this, SLOT(on_Route_released()));
 }
@@ -49,8 +49,8 @@ void InterDigitation::Place(const uint32_t row, const uint32_t column, QGraphics
 	const auto cells = m_groupCells.GetCells();
 
 	// because all cells has the same width and height
-	uint32_t width = cells.begin()->second.back().GetWidth();
-	uint32_t height = cells.begin()->second.back().GetHeight();
+	const uint32_t width = cells.begin()->second.back().GetWidth();
+	const uint32_t height = cells.begin()->second.back().GetHeight();
 
 	uint32_t less{};
 	uint32_t more{};
@@ -331,29 +331,29 @@ void InterDigitation::Initialize()
 	mainLayout->addWidget(m_detailsButton, row, 0, 1, 1);
 	++row;
 	// row3
-	mainLayout->addWidget(m_typeLabel, row, 0, 1, 1, Qt::AlignCenter);
-	mainLayout->addWidget(m_countLabel, row, 1, 1, 1, Qt::AlignCenter);
-	mainLayout->addWidget(m_widthLabel, row, 2, 1, 1, Qt::AlignCenter);
-	mainLayout->addWidget(m_heightLabel, row, 3, 1, 1, Qt::AlignCenter);
-	mainLayout->addItem(new QSpacerItem(25, 25), row, 4, 1, 1);
+	mainLayout->addWidget(m_typeLabel, row, 0, Qt::AlignCenter);
+	mainLayout->addWidget(m_countLabel, row, 1, Qt::AlignCenter);
+	mainLayout->addWidget(m_widthLabel, row, 2, Qt::AlignCenter);
+	mainLayout->addWidget(m_heightLabel, row, 3, Qt::AlignCenter);
+	mainLayout->addItem(new QSpacerItem(25, 25), row, 4);
 	++row;
 	// row4
-	mainLayout->addWidget(m_typeComboBox, row, 0, 1, 1);
-	mainLayout->addWidget(m_countLineEdit, row, 1, 1, 1);
-	mainLayout->addWidget(m_widthLineEdit, row, 2, 1, 1);
-	mainLayout->addWidget(m_heightLineEdit, row, 3, 1, 1);
-	mainLayout->addWidget(m_addButton, row, 4, 1, 1);
+	mainLayout->addWidget(m_typeComboBox, row, 0);
+	mainLayout->addWidget(m_countLineEdit, row, 1);
+	mainLayout->addWidget(m_widthLineEdit, row, 2);
+	mainLayout->addWidget(m_heightLineEdit, row, 3);
+	mainLayout->addWidget(m_addButton, row, 4);
 	++row;
 	// row5, 6
-	mainLayout->addWidget(m_commonCentroidRadioButton, row, 1, 1, 1);
+	mainLayout->addWidget(m_commonCentroidRadioButton, row, 1);
 	mainLayout->addWidget(m_browseButton, row, 2, 2, 1, Qt::AlignRight);
 	mainLayout->addWidget(m_browseLineEdit, row, 3, 2, 1);
-	mainLayout->addWidget(m_periodicRadioButton, ++row, 1, 1, 1);
+	mainLayout->addWidget(m_periodicRadioButton, ++row, 1);
 	++row;
 	// row7-14
 	mainLayout->addWidget(m_graphicsView, row, 0, 8, 4);
-	mainLayout->addWidget(m_placeButton, 13, 4, 1, 1);
-	mainLayout->addWidget(m_routeButton, 14, 4, 1, 1);
+	mainLayout->addWidget(m_placeButton, 13, 4);
+	mainLayout->addWidget(m_routeButton, 14, 4);
 
 	setLayout(mainLayout);
 

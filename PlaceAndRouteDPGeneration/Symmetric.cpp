@@ -423,39 +423,39 @@ void Symmetric::Initialize()
 
 	// row0
 	int row = 0;
-	mainLayout->addWidget(m_backButton, row, 0, 1, 1);
+	mainLayout->addWidget(m_backButton, row, 0);
 	mainLayout->addWidget(title, row, 1, 1, 4, Qt::AlignCenter);
 	++row;
 	// row1
 	mainLayout->addWidget(line, row, 0, 1, 5);
 	++row;
 	// row2
-	mainLayout->addWidget(m_detailsButton, row, 0, 1, 1);
+	mainLayout->addWidget(m_detailsButton, row, 0);
 	++row;
 	// row3
-	mainLayout->addWidget(m_typeLabel, row, 0, 1, 1, Qt::AlignCenter);
-	mainLayout->addWidget(m_countLabel, row, 1, 1, 1, Qt::AlignCenter);
-	mainLayout->addWidget(m_widthLabel, row, 2, 1, 1, Qt::AlignCenter);
-	mainLayout->addWidget(m_heightLabel, row, 3, 1, 1, Qt::AlignCenter);
-	mainLayout->addItem(new QSpacerItem(25, 25), row, 4, 1, 1);
+	mainLayout->addWidget(m_typeLabel, row, 0, Qt::AlignCenter);
+	mainLayout->addWidget(m_countLabel, row, 1,Qt::AlignCenter);
+	mainLayout->addWidget(m_widthLabel, row, 2, Qt::AlignCenter);
+	mainLayout->addWidget(m_heightLabel, row, 3, Qt::AlignCenter);
+	mainLayout->addItem(new QSpacerItem(25, 25), row, 4);
 	++row;
 	// row4
-	mainLayout->addWidget(m_typeComboBox, row, 0, 1, 1);
-	mainLayout->addWidget(m_countLineEdit, row, 1, 1, 1);
-	mainLayout->addWidget(m_widthLineEdit, row, 2, 1, 1);
-	mainLayout->addWidget(m_heightLineEdit, row, 3, 1, 1);
+	mainLayout->addWidget(m_typeComboBox, row, 0);
+	mainLayout->addWidget(m_countLineEdit, row, 1);
+	mainLayout->addWidget(m_widthLineEdit, row, 2);
+	mainLayout->addWidget(m_heightLineEdit, row, 3);
 	mainLayout->addWidget(m_addButton, row, 4, 1, 1);
 	++row;
 	// row5, 6
-	mainLayout->addWidget(m_horizontalRadioButton, row, 1, 1, 1);
+	mainLayout->addWidget(m_horizontalRadioButton, row, 1);
 	mainLayout->addWidget(m_browseButton, row, 2, 2, 1, Qt::AlignRight);
 	mainLayout->addWidget(m_browseLineEdit, row, 3, 2, 1);
-	mainLayout->addWidget(m_verticalRadioButton, ++row, 1, 1, 1);
+	mainLayout->addWidget(m_verticalRadioButton, ++row, 1);
 	++row;
 	// row7-14
 	mainLayout->addWidget(m_graphicsView, row, 0, 8, 4);
-	mainLayout->addWidget(m_placeButton, 13, 4, 1, 1);
-	mainLayout->addWidget(m_routeButton, 14, 4, 1, 1);
+	mainLayout->addWidget(m_placeButton, 13, 4);
+	mainLayout->addWidget(m_routeButton, 14, 4);
 
 	setLayout(mainLayout);
 
@@ -682,13 +682,12 @@ bool BFS(
 {
 	std::list<int> queue;
 	std::vector<bool> visited;
-	visited.resize(graph.size());
 
-	for (int i = 0; i < graph.size(); i++)
+	for (size_t i = 0; i < graph.size(); ++i)
 	{
-		visited[i] = false;
-		distance[i] = INT_MAX;
-		predecessor[i] = -1;
+		visited.push_back(false);
+		distance.push_back(INT_MAX);
+		predecessor.push_back(-1);
 	}
 
 	visited[source] = true;
@@ -700,7 +699,7 @@ bool BFS(
 	{
 		int u = queue.front();
 		queue.pop_front();
-		for (int i = 0; i < graph[u].size(); i++)
+		for (size_t i = 0; i < graph[u].size(); i++)
 		{
 			if (visited[graph[u][i]] == false)
 			{
@@ -726,8 +725,6 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 	QList<QGraphicsSimpleTextItem*> itemIds;
 	std::vector<uint32_t> predecessor;
 	std::vector<uint32_t> distance;
-	predecessor.resize(idsAdj.size());
-	distance.resize(idsAdj.size());
 
 	auto cells = m_groupCells.GetCells();
 	auto it = cells.begin();
@@ -748,8 +745,11 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 	std::vector<std::vector<uint32_t>> graph;
 	graph.resize(itemIds.size());
 
-	QVector<QPointF> parentCenters;
-	parentCenters.resize(itemIds.size());
+	QVector<QGraphicsRectItem*> parentRects;
+	parentRects.resize(itemIds.size());
+
+	QVector<QPointF> papi;
+	papi.resize(itemIds.size());
 
 	for (size_t i = 0; i < itemIds.size(); ++i)
 	{
@@ -762,9 +762,9 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 			return;
 		}
 
-		QPointF currentPoint = currentParent->pos();
-
-		parentCenters[i] = currentPoint;
+		parentRects[i] = currentParentRect;
+		
+		QPointF currentPoint = currentParent->pos() + currentParentRect->parentItem()->pos();
 
 		QPointF candidatePoint1(currentPoint.x() + width, currentPoint.y());
 		QPointF candidatePoint2(currentPoint.x() - width, currentPoint.y());
@@ -777,7 +777,7 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 			{
 				auto otherParent = itemIds[j]->parentItem();
 
-				QGraphicsRectItem* otherParentRect = dynamic_cast<QGraphicsRectItem*>(otherParent);
+				QGraphicsRectItem* otherParentRect = qgraphicsitem_cast<QGraphicsRectItem*>(otherParent);
 
 				if (otherParentRect == nullptr)
 				{
@@ -832,24 +832,27 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 				{
 					if (itemIds[i]->text() == idSource)
 					{
-						sourcePoint = parentCenters[i];
+						sourcePoint = parentRects[i]->pos();
+						sourcePoint.rx() += width / 2;
+						sourcePoint.ry() += height / 2;
 					}
 					else if (itemIds[i]->text() == idTarget)
 					{
-						targetPoint = parentCenters[i];
+						targetPoint = parentRects[i]->pos();
+						targetPoint.rx() += width / 2;
+						targetPoint.ry() += height / 2;
 					}
 				}
 
 				QLineF line(sourcePoint, targetPoint);
-				m_scene->addLine(line, QPen(Qt::red));
+				QGraphicsLineItem* gLine = new QGraphicsLineItem(line, parentRects[i]->parentItem());
+				gLine->setPen(QPen(Qt::red)); m_scene->addItem(gLine);
 			}
 
 			path.clear();
 			distance.clear();
 			predecessor.clear();
-			break;
 		}
-		break;
 	}
 
 	m_graphicsView->setScene(m_scene);
