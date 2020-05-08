@@ -17,7 +17,7 @@ namespace
 	static const QString greenPath = ":/PlaceAndRouteDPGeneration/Resources/green.png";
 	static const QString bluePath = ":/PlaceAndRouteDPGeneration/Resources/blue.jpg";
 	static const QString yellowPath = ":/PlaceAndRouteDPGeneration/Resources/yellow.png";
-	static const QString redPath = ":/PlaceAndRouteDPGeneration/Resources/red.jpg";
+	static const QString redPath = ":/PlaceAndRouteDPGeneration/Resources/red.png";
 }
 
 UserGeneratedPattern::UserGeneratedPattern(QWidget* parent)
@@ -79,13 +79,13 @@ UserGeneratedPattern::UserGeneratedPattern(QWidget* parent)
 
 void UserGeneratedPattern::Place(const uint32_t row, const uint32_t column, QGraphicsRectItem* area)
 {
-	static uint32_t idNumber = 0U;
-	constexpr uint32_t width = 50;
-	constexpr uint32_t height = 50;
+	static uint32_t idNumber = 0u;
+	constexpr uint32_t width = 50u;
+	constexpr uint32_t height = 50u;
 
-	for (size_t i = 0; i < row; ++i)
+	for (size_t i = 0; i < 2 * row; ++i)
 	{
-		for (size_t j = 0; j < row; ++j)
+		for (size_t j = 0; j < 2 * column; ++j)
 		{
 			QGraphicsRectItem* rect = new QGraphicsRectItem(0, 0, width, height, area);
 
@@ -96,8 +96,12 @@ void UserGeneratedPattern::Place(const uint32_t row, const uint32_t column, QGra
 
 			QGraphicsSimpleTextItem* idItem = new QGraphicsSimpleTextItem(id, rect);
 			idItem->setPos(((rect->rect().topLeft() + rect->rect().topRight()) / 2, (rect->rect().topLeft() + rect->rect().bottomLeft()) / 2));
+			
+			rect->setPos(QPoint((i * width), (j * height)) + QPoint(25, -25));
 		}
 	}
+
+	m_scene->addItem(area);
 }
 
 void UserGeneratedPattern::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
@@ -153,10 +157,10 @@ void UserGeneratedPattern::Initialize()
 
 	QGridLayout* patternLayout = new QGridLayout();
 
-	m_topLeftLabel->setFixedSize(200, 200);
-	m_topRightLabel->setFixedSize(200, 200);
-	m_bottomLeftLabel->setFixedSize(200, 200);
-	m_bottomRightLabel->setFixedSize(200, 200);
+	m_topLeftLabel->setFixedSize(300, 100);
+	m_topRightLabel->setFixedSize(300, 100);
+	m_bottomLeftLabel->setFixedSize(300, 100);
+	m_bottomRightLabel->setFixedSize(300, 100);
 
 	m_topLeftLabel->setPixmap(m_topLeftPic);
 	m_topRightLabel->setPixmap(m_topRightPic);
@@ -306,14 +310,14 @@ Qt::GlobalColor UserGeneratedPattern::GetColorByIndex(const uint32_t i, const ui
 		}
 		else
 		{
-			color = GetColorByText(m_topRightComboBox->currentText());
+			color = GetColorByText(m_bottomLeftComboBox->currentText());
 		}
 	}
 	else 
 	{
 		if (j % 2 == 0)
 		{
-			color = GetColorByText(m_bottomLeftComboBox->currentText());
+			color = GetColorByText(m_topRightComboBox->currentText());
 		}
 		else
 		{

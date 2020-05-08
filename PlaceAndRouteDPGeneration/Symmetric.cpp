@@ -466,7 +466,7 @@ void Symmetric::Initialize()
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/green.png"), "green");
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/yellow.png"), "yellow");
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/blue.jpg"), "blue");
-	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/red.jpg"), "red");
+	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/red.png"), "red");
 
 	// Set labels alignments
 	m_countLineEdit->setAlignment(Qt::AlignRight);
