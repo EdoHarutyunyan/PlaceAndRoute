@@ -13,6 +13,8 @@
 
 InterDigitation::InterDigitation(QWidget* parent)
 	: QWidget(parent)
+	, m_parser(std::make_shared<Parser>())
+	, m_router(std::make_shared<Router>())
 	, m_graphicsView(new QGraphicsView(this))
 	, m_scene(new QGraphicsScene(this))
 	, m_backButton(new QPushButton("< Back", this))
@@ -567,26 +569,33 @@ void InterDigitation::on_Route_released()
 	if (!file.open(QFile::ReadOnly | QFile::Text))
 	{
 		QMessageBox::warning(this, "title", "file not opened");
+		return;
 	}
 
 	QTextStream in(&file);
 	QString text = in.readAll();
 
-	std::vector<std::vector<uint32_t>> ids = Parse(std::move(text));
+	std::vector<std::vector<uint32_t>> idsAdj = m_parser->Parse(std::move(text));
 
-	Route(ids);
-}
+	QList<QGraphicsItem*> items = m_scene->items();
+	QList<QGraphicsSimpleTextItem*> itemIds;
+	std::vector<uint32_t> predecessor;
+	std::vector<uint32_t> distance;
 
-void InterDigitation::Route(const std::vector<std::vector<uint32_t>>& ids)
-{
-	// TODO
-}
+	auto cells = m_groupCells.GetCells();
+	auto it = cells.begin();
 
-std::vector<std::vector<uint32_t>> InterDigitation::Parse(QString&& text)
-{
-	// TODO
+	const uint32_t height = it->second.back().GetHeight();
+	const uint32_t width = it->second.back().GetWidth();
 
-	return std::vector<std::vector<uint32_t>>();
+	QVector<QGraphicsLineItem*> lines = m_router->Route(idsAdj, items, width, height);
+
+	for (const auto& line : lines)
+	{
+		m_scene->addItem(line);
+	}
+
+	m_graphicsView->setScene(m_scene);
 }
 
 void InterDigitation::onInterDigitationChosen()

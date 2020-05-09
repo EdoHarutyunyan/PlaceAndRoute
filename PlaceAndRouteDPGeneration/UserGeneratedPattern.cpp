@@ -18,14 +18,18 @@ namespace
 	static const QString bluePath = ":/PlaceAndRouteDPGeneration/Resources/blue.jpg";
 	static const QString yellowPath = ":/PlaceAndRouteDPGeneration/Resources/yellow.png";
 	static const QString redPath = ":/PlaceAndRouteDPGeneration/Resources/red.png";
+
+	static const uint32_t cellHeight = 50U;
+	static const uint32_t cellWidth = 50U;
 }
 
 UserGeneratedPattern::UserGeneratedPattern(QWidget* parent)
 	: QWidget(parent)
+	, m_parser(std::make_shared<Parser>())
+	, m_router(std::make_shared<Router>())
 	, m_graphicsView(new QGraphicsView(this))
 	, m_scene(new QGraphicsScene(this))
 	, m_backButton(new QPushButton("< Back", this))
-	, m_detailsButton(new QPushButton("Details", this))
 	, m_browseButton(new QPushButton("Browse", this))
 	, m_placeButton(new QPushButton("Place", this))
 	, m_routeButton(new QPushButton("Route", this))
@@ -51,7 +55,6 @@ UserGeneratedPattern::UserGeneratedPattern(QWidget* parent)
 
 	connect(m_backButton, SIGNAL(released()), this, SLOT(on_Back_released()));
 	connect(m_browseButton, SIGNAL(released()), this, SLOT(on_Browse_released()));
-	connect(m_detailsButton, SIGNAL(released()), this, SLOT(on_Details_released()));
 	connect(m_placeButton, SIGNAL(released()), this, SLOT(on_Place_released()));
 	connect(m_routeButton, SIGNAL(released()), this, SLOT(on_Route_released()));
 
@@ -80,14 +83,12 @@ UserGeneratedPattern::UserGeneratedPattern(QWidget* parent)
 void UserGeneratedPattern::Place(const uint32_t row, const uint32_t column, QGraphicsRectItem* area)
 {
 	static uint32_t idNumber = 0u;
-	constexpr uint32_t width = 50u;
-	constexpr uint32_t height = 50u;
 
 	for (size_t i = 0; i < 2 * row; ++i)
 	{
 		for (size_t j = 0; j < 2 * column; ++j)
 		{
-			QGraphicsRectItem* rect = new QGraphicsRectItem(0, 0, width, height, area);
+			QGraphicsRectItem* rect = new QGraphicsRectItem(0, 0, cellWidth, cellHeight, area);
 
 			rect->setPen(QPen(Qt::black));
 			rect->setBrush(QBrush(GetColorByIndex(i, j)));
@@ -97,20 +98,11 @@ void UserGeneratedPattern::Place(const uint32_t row, const uint32_t column, QGra
 			QGraphicsSimpleTextItem* idItem = new QGraphicsSimpleTextItem(id, rect);
 			idItem->setPos(((rect->rect().topLeft() + rect->rect().topRight()) / 2, (rect->rect().topLeft() + rect->rect().bottomLeft()) / 2));
 			
-			rect->setPos(QPoint((i * width), (j * height)) + QPoint(25, -25));
+			rect->setPos(QPoint((j * cellWidth), (i * cellHeight)) + QPoint(25, 25));
 		}
 	}
 
 	m_scene->addItem(area);
-}
-
-void UserGeneratedPattern::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
-{
-}
-
-std::vector<std::vector<uint32_t>> UserGeneratedPattern::Parse(QString&& text)
-{
-	return std::vector<std::vector<uint32_t>>();
 }
 
 std::vector<std::pair<uint32_t, uint32_t>> UserGeneratedPattern::AreaGeneration()
@@ -138,9 +130,7 @@ void UserGeneratedPattern::Initialize()
 	++row;
 	// row1
 	mainLayout->addWidget(line, row, 0, 1, 5);
-	++row;
-	// row2
-	mainLayout->addWidget(m_detailsButton, row, 0);
+
 	++row;
 	// row3
 	mainLayout->addWidget(new QLabel("Top left", this), row, 1, Qt::AlignCenter);
@@ -190,8 +180,8 @@ void UserGeneratedPattern::Initialize()
 	++row;
 	// row8-15
 	mainLayout->addWidget(m_graphicsView, row, 0, 8, 7);
-	mainLayout->addWidget(m_placeButton, 14, 9);
-	mainLayout->addWidget(m_routeButton, 15, 9);
+	mainLayout->addWidget(m_placeButton, 13, 9);
+	mainLayout->addWidget(m_routeButton, 14, 9);
 
 	setLayout(mainLayout);
 
@@ -223,11 +213,6 @@ void UserGeneratedPattern::Initialize()
 
 void UserGeneratedPattern::SetStyleSheets()
 {
-	QPixmap pixmap(":/PlaceAndRouteDPGeneration/Resources/basket.png");
-	QIcon ButtonIcon(pixmap);
-	m_detailsButton->setIcon(ButtonIcon);
-	m_detailsButton->setIconSize(QSize(65, 65));
-
 	QPixmap bkgnd(":/PlaceAndRouteDPGeneration/Resources/background.jpg");
 	QPalette palette;
 	palette.setBrush(QPalette::Background, bkgnd);
@@ -241,7 +226,7 @@ void UserGeneratedPattern::SetStyleSheets()
 
 void UserGeneratedPattern::on_Back_released()
 {
-
+	close();
 }
 
 void UserGeneratedPattern::on_Browse_released()
@@ -265,11 +250,17 @@ void UserGeneratedPattern::on_Place_released()
 		return;
 	}
 
-	QRect rect(QPoint(0, 0), QSize(50, 50));
+	const uint32_t row = m_rowFactorLineEdit->text().toUInt();
+	const uint32_t column = m_columnFactorLineEdit->text().toUInt();
+
+	const uint32_t rectHeight = 2 * row * cellHeight + 50;
+	const uint32_t rectWidht = 2 * column * cellWidth + 50;
+
+	QRect rect(QPoint(0, 0), QSize(rectWidht, rectHeight));
 	QGraphicsRectItem* area = new QGraphicsRectItem(rect);
 	area->setPos(50, 50);
 
-	Place(m_rowFactorLineEdit->text().toUInt(), m_columnFactorLineEdit->text().toUInt(), area);
+	Place(row, column, area);
 
 	m_graphicsView->setScene(m_scene);
 }
@@ -355,8 +346,34 @@ Qt::GlobalColor UserGeneratedPattern::GetColorByText(const QString& boxText)
 
 void UserGeneratedPattern::on_Route_released()
 {
-}
+	QString fileName = m_browseLineEdit->text();
+	QFile file(fileName);
 
+	if (!file.open(QFile::ReadOnly | QFile::Text))
+	{
+		QMessageBox::warning(this, "title", "file not opened");
+		return;
+	}
+
+	QTextStream in(&file);
+	QString text = in.readAll();
+
+	std::vector<std::vector<uint32_t>> idsAdj = m_parser->Parse(std::move(text));
+
+	QList<QGraphicsItem*> items = m_scene->items();
+	QList<QGraphicsSimpleTextItem*> itemIds;
+	std::vector<uint32_t> predecessor;
+	std::vector<uint32_t> distance;
+
+	QVector<QGraphicsLineItem*> lines = m_router->Route(idsAdj, items, cellWidth, cellHeight);
+
+	for (const auto& line : lines)
+	{
+		m_scene->addItem(line);
+	}
+
+	m_graphicsView->setScene(m_scene);
+}
 
 void UserGeneratedPattern::onUserGeneratedPatternChosen()
 {

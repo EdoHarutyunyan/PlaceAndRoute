@@ -1,9 +1,10 @@
-#ifndef Symmetric_H
-#define Symmetric_H
+#pragma once
 
 #include "IPlaceDesign.h"
-#include "IRoute.h"
+#include "Router.h"
+#include "Parser.h"
 
+#include <iostream>
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -13,7 +14,7 @@
 #include <QRadioButton>
 #include <QLineEdit>
 
-class Symmetric : public QWidget, public IPlaceDesign, public IRoute
+class Symmetric : public QWidget, public IPlaceDesign
 {
     Q_OBJECT
 
@@ -28,8 +29,6 @@ public:
 	};
 
 	void Place(uint32_t row, uint32_t column, QGraphicsRectItem* area) override;
-	void Route(const std::vector<std::vector<uint32_t>>& idsAdj) override;
-	std::vector<std::vector<uint32_t>> Parse(QString&& text) override;
 	std::vector<std::pair<uint32_t, uint32_t>> AreaGeneration() override;
 
 	void SetSymmetryLine(SymmetryLine symmetryLine);
@@ -54,6 +53,8 @@ private slots:
 
 private:
 	SymmetryLine m_symmetryLine;
+	std::shared_ptr<Parser> m_parser;
+	std::shared_ptr<Router> m_router;
 
 	QGraphicsView* m_graphicsView;
 	QGraphicsScene* m_scene;
@@ -75,5 +76,3 @@ private:
 	QLineEdit* m_heightLineEdit;
 	QLineEdit* m_browseLineEdit;
 };
-
-#endif // Symmetric_H

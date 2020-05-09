@@ -86,7 +86,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
     <ClCompile Include="Parser.cpp" />
-    <ClCompile Include="Route.cpp" />
+    <ClCompile Include="Router.cpp" />
     <ClCompile Include="Symmetric.cpp" />
     <ClCompile Include="UserGeneratedPattern.cpp" />
   </ItemGroup>
@@ -115,12 +115,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="GraphUtils.h" />
     <ClInclude Include="GroupCells.h" />
     <ClInclude Include="IPlaceDesign.h" />
     <ClInclude Include="IRoute.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Route.h" />
+    <ClInclude Include="Router.h" />
     <QtMoc Include="UserGeneratedPattern.h" />
   </ItemGroup>
   <ItemGroup>

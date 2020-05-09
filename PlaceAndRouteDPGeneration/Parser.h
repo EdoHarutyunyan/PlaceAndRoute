@@ -1,9 +1,11 @@
 #pragma once
 #include <QString>
+#include <vector>
 
 class Parser
 {
 public:
-	void Parse(QString&& text);
+	Parser() = default;
+	std::vector<std::vector<uint32_t>> Parse(QString&& text);
 };
 

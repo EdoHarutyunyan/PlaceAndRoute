@@ -1,7 +1,9 @@
 #pragma once
 #include "IPlaceDesign.h"
-#include "IRoute.h"
+#include "Router.h"
+#include "Parser.h"
 
+#include <iostream>
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -12,7 +14,7 @@
 #include <QLineEdit>
 #include <QPixmap>
 
-class UserGeneratedPattern : public QWidget, public IPlaceDesign, public IRoute
+class UserGeneratedPattern : public QWidget, public IPlaceDesign
 {
 	Q_OBJECT
 
@@ -21,8 +23,6 @@ public:
 	~UserGeneratedPattern() = default;
 
 	void Place(uint32_t row, uint32_t column, QGraphicsRectItem* area) override;
-	void Route(const std::vector<std::vector<uint32_t>>& idsAdj) override;
-	std::vector<std::vector<uint32_t>> Parse(QString&& text) override;
 	std::vector<std::pair<uint32_t, uint32_t>> AreaGeneration() override;
 
 private:
@@ -43,10 +43,12 @@ private slots:
 	void on_Route_released();
 
 private:
+	std::shared_ptr<Parser> m_parser;
+	std::shared_ptr<Router> m_router;
+
 	QGraphicsView* m_graphicsView;
 	QGraphicsScene* m_scene;
 	QPushButton* m_backButton;
-	QPushButton* m_detailsButton;
 	QPushButton* m_browseButton;
 	QPushButton* m_placeButton;
 	QPushButton* m_routeButton;
