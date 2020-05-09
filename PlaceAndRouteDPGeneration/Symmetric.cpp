@@ -327,38 +327,43 @@ void Symmetric::Initialize()
 	// row0
 	int row = 0;
 	mainLayout->addWidget(m_backButton, row, 0);
-	mainLayout->addWidget(title, row, 1, 1, 4, Qt::AlignCenter);
+	mainLayout->addWidget(title, row, 1, 1, 7, Qt::AlignCenter);
 	++row;
 	// row1
-	mainLayout->addWidget(line, row, 0, 1, 5);
+	mainLayout->addWidget(line, row, 0, 1, 7);
 	++row;
 	// row2
-	mainLayout->addWidget(m_detailsButton, row, 0);
+	mainLayout->addWidget(m_detailsButton, row, 7);
 	++row;
 	// row3
-	mainLayout->addWidget(m_typeLabel, row, 0, Qt::AlignCenter);
-	mainLayout->addWidget(m_countLabel, row, 1,Qt::AlignCenter);
-	mainLayout->addWidget(m_widthLabel, row, 2, Qt::AlignCenter);
-	mainLayout->addWidget(m_heightLabel, row, 3, Qt::AlignCenter);
-	mainLayout->addItem(new QSpacerItem(25, 25), row, 4);
+	mainLayout->addWidget(m_typeLabel, row, 3, Qt::AlignCenter);
+	mainLayout->addWidget(m_countLabel, row, 4,Qt::AlignCenter);
+	mainLayout->addWidget(m_widthLabel, row, 5, Qt::AlignCenter);
+	mainLayout->addWidget(m_heightLabel, row, 6, Qt::AlignCenter);
+	mainLayout->addItem(new QSpacerItem(150, 0), row, 0);
+	mainLayout->addItem(new QSpacerItem(150, 0), row, 1);
+	mainLayout->addItem(new QSpacerItem(150, 0), row, 2);
 	++row;
 	// row4
-	mainLayout->addWidget(m_typeComboBox, row, 0);
-	mainLayout->addWidget(m_countLineEdit, row, 1);
-	mainLayout->addWidget(m_widthLineEdit, row, 2);
-	mainLayout->addWidget(m_heightLineEdit, row, 3);
-	mainLayout->addWidget(m_addButton, row, 4, 1, 1);
+	mainLayout->addWidget(m_typeComboBox, row, 3);
+	mainLayout->addWidget(m_countLineEdit, row, 4);
+	mainLayout->addWidget(m_widthLineEdit, row, 5);
+	mainLayout->addWidget(m_heightLineEdit, row, 6);
+	mainLayout->addWidget(m_addButton, row, 7, 1, 1);
+	mainLayout->addItem(new QSpacerItem(150, 0), row, 0);
+	mainLayout->addItem(new QSpacerItem(150, 0), row, 1);
+	mainLayout->addItem(new QSpacerItem(150, 0), row, 2);
 	++row;
 	// row5, 6
 	mainLayout->addWidget(m_horizontalRadioButton, row, 1);
-	mainLayout->addWidget(m_browseButton, row, 2, 2, 1, Qt::AlignRight);
-	mainLayout->addWidget(m_browseLineEdit, row, 3, 2, 1);
+	mainLayout->addWidget(m_browseButton, row, 7, 2, 1);
+	mainLayout->addWidget(m_browseLineEdit, row, 6, 2, 1);
 	mainLayout->addWidget(m_verticalRadioButton, ++row, 1);
 	++row;
 	// row7-14
-	mainLayout->addWidget(m_graphicsView, row, 0, 8, 4);
-	mainLayout->addWidget(m_placeButton, 13, 4);
-	mainLayout->addWidget(m_routeButton, 14, 4);
+	mainLayout->addWidget(m_graphicsView, row, 0, 8, 7);
+	mainLayout->addWidget(m_placeButton, 13, 7);
+	mainLayout->addWidget(m_routeButton, 14, 7);
 
 	setLayout(mainLayout);
 

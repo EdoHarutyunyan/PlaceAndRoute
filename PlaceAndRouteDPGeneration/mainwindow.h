@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 #include <QPushButton>
@@ -15,11 +14,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
 	~MainWindow() = default;
-
-signals:
-    void SymmetricChosen();
-    void InterDigitationChosen();
-    void MinimumAreaChosen();
 
 private slots:
     void on_symmetric_released();
@@ -38,4 +32,3 @@ private:
 	QPushButton* m_interDigitationButton;
 	QPushButton* m_userGeneratedPatternButton;
 };
-#endif // MAINWINDOW_H
