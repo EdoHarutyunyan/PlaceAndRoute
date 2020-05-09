@@ -256,6 +256,9 @@ void UserGeneratedPattern::on_Details_released()
 
 void UserGeneratedPattern::on_Place_released()
 {
+	m_scene->clear();
+	m_graphicsView->setScene(m_scene);
+
 	if (m_rowFactorLineEdit->text().isEmpty() || m_columnFactorLineEdit->text().isEmpty())
 	{
 		QMessageBox::warning(this, "Warning!", "Row factor and/or Column factor are empty!");

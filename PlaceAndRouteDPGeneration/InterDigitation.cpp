@@ -495,6 +495,9 @@ void InterDigitation::on_Details_released()
 
 void InterDigitation::on_Place_released()
 {
+	m_scene->clear();
+	m_graphicsView->setScene(m_scene);
+
 	if (!m_groupCells.GetCount())
 	{
 		QMessageBox::warning(this, "Warning!", "Not elements to place!");

@@ -289,23 +289,26 @@ std::vector<std::vector<uint32_t>> Symmetric::Parse(QString&& text)
 		}
 	}
 
-	if (tokens.size() > 2)
-	{
-		for (size_t i = 0; i < tokens.size() - 2; i += 2)
-		{
-			uint32_t source = GetIdNumberByString(tokens[i]);
-			uint32_t target = GetIdNumberByString(tokens[i + 1]);
+	//if (tokens.size() > 2)
+	//{
 
-			connectNodes(idsAdj, source, target);
-		}
-	}
-	else
+	//}
+
+	for (size_t i = 0; i <= tokens.size() - 2; i += 2)
 	{
-		uint32_t source = GetIdNumberByString(tokens[0]);
-		uint32_t target = GetIdNumberByString(tokens[1]);
+		uint32_t source = GetIdNumberByString(tokens[i]);
+		uint32_t target = GetIdNumberByString(tokens[i + 1]);
 
 		connectNodes(idsAdj, source, target);
 	}
+	//else
+	//{
+	//	uint32_t source = GetIdNumberByString(tokens[0]);
+	//	uint32_t target = GetIdNumberByString(tokens[1]);
+
+	//	connectNodes(idsAdj, source, target);
+	//}
+
 	return idsAdj;
 }
 
@@ -328,7 +331,6 @@ std::vector<std::string> Tokenize(std::string&& line)
 
 	return tokens;
 }
-
 
 std::vector<std::pair<uint32_t, uint32_t>> Symmetric::AreaGeneration()
 {
@@ -576,6 +578,9 @@ void Symmetric::on_Add_released()
 
 void Symmetric::on_Place_released()
 {
+	m_scene->clear();
+	m_graphicsView->setScene(m_scene);
+
 	if (!m_groupCells.GetCount())
 	{
 		QMessageBox::warning(this, "Warning!", "Not elements to place!");
@@ -764,7 +769,7 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 
 		parentRects[i] = currentParentRect;
 		
-		QPointF currentPoint = currentParent->pos() + currentParentRect->parentItem()->pos();
+		QPointF currentPoint = currentParent->pos();
 
 		QPointF candidatePoint1(currentPoint.x() + width, currentPoint.y());
 		QPointF candidatePoint2(currentPoint.x() - width, currentPoint.y());
@@ -782,6 +787,11 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 				if (otherParentRect == nullptr)
 				{
 					return;
+				}
+
+				if (currentParentRect->parentItem()->pos() != otherParentRect->parentItem()->pos())
+				{
+					continue;
 				}
 
 				QPointF neighborPoint(otherParentRect->pos());
@@ -828,24 +838,27 @@ void Symmetric::Route(const std::vector<std::vector<uint32_t>>& idsAdj)
 				QString idSource = GetIdStringByNumber(path[p]);
 				QString idTarget = GetIdStringByNumber(path[p + 1]);
 
-				for (size_t i = 0; i < itemIds.size(); ++i)
+				QGraphicsItem* lineParent = nullptr;
+				for (size_t k = 0; k < itemIds.size(); ++k)
 				{
-					if (itemIds[i]->text() == idSource)
+					if (itemIds[k]->text() == idSource)
 					{
-						sourcePoint = parentRects[i]->pos();
+						sourcePoint = parentRects[k]->pos();
 						sourcePoint.rx() += width / 2;
 						sourcePoint.ry() += height / 2;
 					}
-					else if (itemIds[i]->text() == idTarget)
+					else if (itemIds[k]->text() == idTarget)
 					{
-						targetPoint = parentRects[i]->pos();
+						targetPoint = parentRects[k]->pos();
 						targetPoint.rx() += width / 2;
 						targetPoint.ry() += height / 2;
+						
+						lineParent = parentRects[k]->parentItem();
 					}
 				}
 
 				QLineF line(sourcePoint, targetPoint);
-				QGraphicsLineItem* gLine = new QGraphicsLineItem(line, parentRects[i]->parentItem());
+				QGraphicsLineItem* gLine = new QGraphicsLineItem(line, lineParent);
 				gLine->setPen(QPen(Qt::red)); m_scene->addItem(gLine);
 			}
 

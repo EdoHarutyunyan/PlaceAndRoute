@@ -86,6 +86,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
     <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="Route.cpp" />
     <ClCompile Include="Symmetric.cpp" />
     <ClCompile Include="UserGeneratedPattern.cpp" />
   </ItemGroup>
@@ -119,6 +120,7 @@
     <ClInclude Include="IRoute.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Route.h" />
     <QtMoc Include="UserGeneratedPattern.h" />
   </ItemGroup>
   <ItemGroup>
