@@ -107,6 +107,7 @@ void UserGeneratedPattern::Place(const uint32_t row, const uint32_t column, QGra
 
 std::vector<std::pair<uint32_t, uint32_t>> UserGeneratedPattern::AreaGeneration()
 {
+	// Currently unused
 	return std::vector<std::pair<uint32_t, uint32_t>>();
 }
 

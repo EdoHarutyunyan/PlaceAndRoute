@@ -10,7 +10,6 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QPushButton>
-#include <QLabel>
 #include <QComboBox>
 #include <QRadioButton>
 #include <QLineEdit>
@@ -65,10 +64,6 @@ private:
 	QPushButton* m_browseButton;
 	QPushButton* m_placeButton;
 	QPushButton* m_routeButton;
-	QLabel* m_typeLabel;
-	QLabel* m_countLabel;
-	QLabel* m_widthLabel;
-	QLabel* m_heightLabel;
 	QComboBox* m_typeComboBox;
 	QRadioButton* m_commonCentroidRadioButton;
 	QRadioButton* m_periodicRadioButton;

@@ -5,6 +5,7 @@
 #include <sstream>
 #include <cassert>
 #include <QFile>
+#include <QLabel>
 #include <QFileDialog>
 #include <QTextStream>
 #include <QMessageBox>
@@ -23,10 +24,6 @@ InterDigitation::InterDigitation(QWidget* parent)
 	, m_browseButton(new QPushButton("Browse", this))
 	, m_placeButton(new QPushButton("Place", this))
 	, m_routeButton(new QPushButton("Route", this))
-	, m_typeLabel(new QLabel("Type", this))
-	, m_countLabel(new QLabel("Count", this))
-	, m_widthLabel(new QLabel("Width", this))
-	, m_heightLabel(new QLabel("Height", this))
 	, m_typeComboBox(new QComboBox(this))
 	, m_commonCentroidRadioButton(new QRadioButton("CommonCentroid", this))
 	, m_periodicRadioButton(new QRadioButton("Periodic", this))
@@ -310,8 +307,9 @@ std::vector<std::pair<uint32_t, uint32_t>> InterDigitation::AreaGeneration()
 
 void InterDigitation::Initialize()
 {
+	setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
+	
 	QGridLayout* mainLayout = new QGridLayout();
-
 	QFrame* line = new QFrame();
 	line->setGeometry(QRect(/* ... */));
 	line->setFrameShape(QFrame::HLine); // Replace by VLine for vertical line
@@ -332,24 +330,34 @@ void InterDigitation::Initialize()
 	// row2
 	mainLayout->addWidget(m_detailsButton, row, 7, 1, 1);
 	++row;
+	
 	// row3
-	mainLayout->addWidget(m_typeLabel, row, 3, Qt::AlignCenter);
-	mainLayout->addWidget(m_countLabel, row, 4, Qt::AlignCenter);
-	mainLayout->addWidget(m_widthLabel, row, 5, Qt::AlignCenter);
-	mainLayout->addWidget(m_heightLabel, row, 6, Qt::AlignCenter);
+	QLabel* typeLabel = new QLabel("Type", this);
+	QLabel* countLabel = new QLabel("Count", this);
+	QLabel* widthLabel = new QLabel("Width", this);
+	QLabel* heightLabel = new QLabel("Height", this);
+
 	mainLayout->addItem(new QSpacerItem(150, 0), row, 0);
 	mainLayout->addItem(new QSpacerItem(150, 0), row, 1);
 	mainLayout->addItem(new QSpacerItem(150, 0), row, 2);
+	mainLayout->addWidget(typeLabel, row, 3, Qt::AlignCenter);
+	mainLayout->addWidget(countLabel, row, 4, Qt::AlignCenter);
+	mainLayout->addWidget(widthLabel, row, 5, Qt::AlignCenter);
+	mainLayout->addWidget(heightLabel, row, 6, Qt::AlignCenter);
 
-	m_typeLabel->setMargin(0);
-	m_countLabel->setMargin(0);
-	m_widthLabel->setMargin(0);
-	m_heightLabel->setMargin(0);
+	//countLabel->setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
+	//widthLabel->setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
+	//heightLabel->setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
 
-	m_typeLabel->setContentsMargins(0, 0, 0, 0);
-	m_countLabel->setContentsMargins(0, 0, 0, 0);
-	m_widthLabel->setContentsMargins(0, 0, 0, 0);
-	m_heightLabel->setContentsMargins(0, 0, 0, 0);
+	typeLabel->setMargin(0);
+	countLabel->setMargin(0);
+	widthLabel->setMargin(0);
+	heightLabel->setMargin(0);
+
+	typeLabel->setContentsMargins(0, 0, 0, 0);
+	countLabel->setContentsMargins(0, 0, 0, 0);
+	widthLabel->setContentsMargins(0, 0, 0, 0);
+	heightLabel->setContentsMargins(0, 0, 0, 0);
 
 	++row;
 	// row4
@@ -377,6 +385,7 @@ void InterDigitation::Initialize()
 	setLayout(mainLayout);
 
 	showMaximized();
+	mainLayout->setSizeConstraint(QLayout::SizeConstraint::SetMinimumSize);
 	setWindowTitle("Symmetric");
 
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/green.png"), "green");

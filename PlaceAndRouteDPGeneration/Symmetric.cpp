@@ -1,10 +1,10 @@
 #include "Symmetric.h"
 
 #include <iostream>
-#include <list>
 #include <string>
 #include <sstream>
 #include <cassert>
+#include <QLabel>
 #include <QFile>
 #include <QFileDialog>
 #include <QTextStream>
@@ -27,10 +27,6 @@ Symmetric::Symmetric(QWidget *parent)
 	, m_browseButton(new QPushButton("Browse", this))
 	, m_placeButton(new QPushButton("Place", this))
 	, m_routeButton(new QPushButton("Route", this))
-	, m_typeLabel(new QLabel("Type", this))
-	, m_countLabel(new QLabel("Count", this))
-	, m_widthLabel(new QLabel("Width", this))
-	, m_heightLabel(new QLabel("Height", this))
 	, m_typeComboBox(new QComboBox(this))
 	, m_horizontalRadioButton(new QRadioButton("Horizontal", this))
 	, m_verticalRadioButton(new QRadioButton("Vertical", this))
@@ -335,11 +331,17 @@ void Symmetric::Initialize()
 	// row2
 	mainLayout->addWidget(m_detailsButton, row, 7);
 	++row;
+	
 	// row3
-	mainLayout->addWidget(m_typeLabel, row, 3, Qt::AlignCenter);
-	mainLayout->addWidget(m_countLabel, row, 4,Qt::AlignCenter);
-	mainLayout->addWidget(m_widthLabel, row, 5, Qt::AlignCenter);
-	mainLayout->addWidget(m_heightLabel, row, 6, Qt::AlignCenter);
+	QLabel* typeLabel = new QLabel("Type", this);
+	QLabel* countLabel = new QLabel("Count", this);
+	QLabel* widthLabel = new QLabel("Width", this);
+	QLabel* heightLabel = new QLabel("Height", this);
+
+	mainLayout->addWidget(typeLabel, row, 3, Qt::AlignCenter);
+	mainLayout->addWidget(countLabel, row, 4,Qt::AlignCenter);
+	mainLayout->addWidget(widthLabel, row, 5, Qt::AlignCenter);
+	mainLayout->addWidget(heightLabel, row, 6, Qt::AlignCenter);
 	mainLayout->addItem(new QSpacerItem(150, 0), row, 0);
 	mainLayout->addItem(new QSpacerItem(150, 0), row, 1);
 	mainLayout->addItem(new QSpacerItem(150, 0), row, 2);
