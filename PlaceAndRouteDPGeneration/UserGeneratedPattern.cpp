@@ -1,9 +1,7 @@
 #include "UserGeneratedPattern.h"
 
-#include <iostream>
 #include <string>
 #include <sstream>
-#include <cassert>
 #include <QFile>
 #include <QFileDialog>
 #include <QTextStream>
@@ -18,7 +16,6 @@
 #include <QComboBox>
 #include <QRadioButton>
 #include <QLineEdit>
-#include <QPixmap>
 
 namespace
 {

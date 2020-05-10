@@ -5,9 +5,9 @@
         <file>Resources/background.jpg</file>
         <file>Resources/interdigitation.png</file>
         <file>Resources/symmetric.png</file>
-        <file>Resources/UserGenerated.jpg</file>
         <file>Resources/green.png</file>
         <file>Resources/red.png</file>
         <file>Resources/yellow.png</file>
+        <file>Resources/UserGenerated.png</file>
     </qresource>
 </RCC>

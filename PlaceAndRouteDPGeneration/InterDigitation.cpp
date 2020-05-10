@@ -1,6 +1,5 @@
 #include "InterDigitation.h"
 
-#include <iostream>
 #include <string>
 #include <sstream>
 #include <cassert>

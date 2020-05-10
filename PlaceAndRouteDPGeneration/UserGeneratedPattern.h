@@ -12,7 +12,6 @@ class QLabel;
 class QComboBox;
 class QRadioButton;
 class QLineEdit;
-class QPixmap;
 
 class UserGeneratedPattern : public QWidget, public IPlaceDesign
 {

@@ -6,7 +6,10 @@
 #include <QMessageBox>
 
 QVector<QGraphicsLineItem*> Router::Route(
-	const std::vector<std::vector<uint32_t>>& idsAdj, const QList<QGraphicsItem*>& items, const uint32_t width, const uint32_t height)
+	const std::vector<std::vector<uint32_t>>& idsAdj, 
+	const QList<QGraphicsItem*>& items, 
+	const uint32_t width, 
+	const uint32_t height)
 {
 	QList<QGraphicsSimpleTextItem*> itemIds;
 	std::vector<uint32_t> predecessor;

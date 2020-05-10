@@ -5,6 +5,7 @@
 #include "UserGeneratedPattern.h"
 
 #include <iostream>
+#include <QLabel>
 #include <QHBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -35,16 +36,25 @@ void MainWindow::Initialize()
 	QIcon ButtonIcon(pixmap);
 	m_symmetricButton->setIcon(ButtonIcon);
 	m_symmetricButton->setIconSize(pixmap.rect().size());
+	m_symmetricButton->setStyleSheet("QPushButton{"
+		"background-color: white"
+		"}");
 
 	QPixmap pixmap2(":/PlaceAndRouteDPGeneration/Resources/interdigitation.png");
 	QIcon ButtonIcon2(pixmap2);
 	m_interDigitationButton->setIcon(ButtonIcon2);
 	m_interDigitationButton->setIconSize(pixmap.rect().size());
+	m_interDigitationButton->setStyleSheet("QPushButton{"
+		"background-color: white"
+		"}");
 
-	QPixmap pixmap3(":/PlaceAndRouteDPGeneration/Resources/UserGenerated.jpg");
+	QPixmap pixmap3(":/PlaceAndRouteDPGeneration/Resources/UserGenerated.png");
 	QIcon ButtonIcon3(pixmap3);
 	m_userGeneratedPatternButton->setIcon(ButtonIcon3);
 	m_userGeneratedPatternButton->setIconSize(pixmap.rect().size());
+	m_userGeneratedPatternButton->setStyleSheet("QPushButton{"
+		"background-color: white"
+		"}");
 
 	QPixmap bkgnd(":/PlaceAndRouteDPGeneration/Resources/background.jpg");
 	QPalette palette;
@@ -53,7 +63,6 @@ void MainWindow::Initialize()
 
 	mainWidget->setLayout(mainLayout);
 	setCentralWidget(mainWidget);
-	
 	showMaximized();
 	setWindowTitle("Design patters");
 }
