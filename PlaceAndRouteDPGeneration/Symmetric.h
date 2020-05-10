@@ -4,14 +4,14 @@
 #include "Router.h"
 #include "Parser.h"
 
-#include <iostream>
 #include <QWidget>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QPushButton>
-#include <QComboBox>
-#include <QRadioButton>
-#include <QLineEdit>
+
+class QGraphicsScene;
+class QGraphicsView;
+class QPushButton;
+class QComboBox;
+class QRadioButton;
+class QLineEdit;
 
 class Symmetric : public QWidget, public IPlaceDesign
 {

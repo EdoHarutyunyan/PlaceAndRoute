@@ -11,9 +11,14 @@
 #include <QMessageBox>
 #include <QGraphicsSimpleTextItem>
 #include <QGridLayout>
-
 #include <QLine>
 #include <QSpacerItem>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QPushButton>
+#include <QComboBox>
+#include <QRadioButton>
+#include <QLineEdit>
 
 Symmetric::Symmetric(QWidget *parent)
 	: QWidget(parent)

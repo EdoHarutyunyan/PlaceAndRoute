@@ -11,6 +11,12 @@
 #include <QMessageBox>
 #include <QGraphicsSimpleTextItem>
 #include <QGridLayout>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QPushButton>
+#include <QComboBox>
+#include <QRadioButton>
+#include <QLineEdit>
 
 InterDigitation::InterDigitation(QWidget* parent)
 	: QWidget(parent)
@@ -307,7 +313,8 @@ std::vector<std::pair<uint32_t, uint32_t>> InterDigitation::AreaGeneration()
 
 void InterDigitation::Initialize()
 {
-	setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
+	//setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
+	//mainLayout->setSizeConstraint(QLayout::SizeConstraint::SetMinimumSize);
 	
 	QGridLayout* mainLayout = new QGridLayout();
 	QFrame* line = new QFrame();
@@ -345,20 +352,6 @@ void InterDigitation::Initialize()
 	mainLayout->addWidget(widthLabel, row, 5, Qt::AlignCenter);
 	mainLayout->addWidget(heightLabel, row, 6, Qt::AlignCenter);
 
-	//countLabel->setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
-	//widthLabel->setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
-	//heightLabel->setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
-
-	typeLabel->setMargin(0);
-	countLabel->setMargin(0);
-	widthLabel->setMargin(0);
-	heightLabel->setMargin(0);
-
-	typeLabel->setContentsMargins(0, 0, 0, 0);
-	countLabel->setContentsMargins(0, 0, 0, 0);
-	widthLabel->setContentsMargins(0, 0, 0, 0);
-	heightLabel->setContentsMargins(0, 0, 0, 0);
-
 	++row;
 	// row4
 	mainLayout->addWidget(m_typeComboBox, row, 3);
@@ -385,7 +378,6 @@ void InterDigitation::Initialize()
 	setLayout(mainLayout);
 
 	showMaximized();
-	mainLayout->setSizeConstraint(QLayout::SizeConstraint::SetMinimumSize);
 	setWindowTitle("Symmetric");
 
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/green.png"), "green");
@@ -394,6 +386,7 @@ void InterDigitation::Initialize()
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/red.png"), "red");
 
 	// Set labels alignments
+	//m_typeComboBox->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Fixed);
 	m_countLineEdit->setAlignment(Qt::AlignRight);
 	m_widthLineEdit->setAlignment(Qt::AlignRight);
 	m_heightLineEdit->setAlignment(Qt::AlignRight);

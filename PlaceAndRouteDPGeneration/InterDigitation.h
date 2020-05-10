@@ -1,18 +1,17 @@
-#ifndef INTERDIGITATION_H
-#define INTERDIGITATION_H
+#pragma once
 
 #include "IPlaceDesign.h"
 #include "Router.h"
 #include "Parser.h"
 
-#include <iostream>
 #include <QWidget>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QPushButton>
-#include <QComboBox>
-#include <QRadioButton>
-#include <QLineEdit>
+
+class QGraphicsScene;
+class QGraphicsView;
+class QPushButton;
+class QComboBox;
+class QRadioButton;
+class QLineEdit;
 
 class InterDigitation : public QWidget, public IPlaceDesign
 {
@@ -72,5 +71,3 @@ private:
 	QLineEdit* m_heightLineEdit;
 	QLineEdit* m_browseLineEdit;
 };
-
-#endif // INTERDIGITATION_H

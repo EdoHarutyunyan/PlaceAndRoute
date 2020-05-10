@@ -11,6 +11,14 @@
 #include <QGridLayout>
 #include <QApplication>
 #include <QGraphicsSimpleTextItem>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QPushButton>
+#include <QLabel>
+#include <QComboBox>
+#include <QRadioButton>
+#include <QLineEdit>
+#include <QPixmap>
 
 namespace
 {
@@ -127,20 +135,20 @@ void UserGeneratedPattern::Initialize()
 	// row0
 	int row = 0;
 	mainLayout->addWidget(m_backButton, row, 0);
-	mainLayout->addWidget(title, row, 1, 1, 4, Qt::AlignCenter);
+	mainLayout->addWidget(title, row, 1, 1, 7, Qt::AlignCenter);
 	++row;
 	// row1
-	mainLayout->addWidget(line, row, 0, 1, 5);
+	mainLayout->addWidget(line, row, 0, 1, 7);
 
 	++row;
-	// row3
+	// row2
 	mainLayout->addWidget(new QLabel("Top left", this), row, 1, Qt::AlignCenter);
 	mainLayout->addWidget(new QLabel("Top right", this), row, 2, Qt::AlignCenter);
 	mainLayout->addWidget(new QLabel("Bottom left", this), row, 3, Qt::AlignCenter);
 	mainLayout->addWidget(new QLabel("Bottom right", this), row, 4, Qt::AlignCenter);
 
 	++row;
-	// row4
+	// row3
 	mainLayout->addWidget(m_topLeftComboBox, row, 1);
 	mainLayout->addWidget(m_topRightComboBox, row, 2);
 	mainLayout->addWidget(m_bottomLeftComboBox, row, 3);
@@ -163,26 +171,26 @@ void UserGeneratedPattern::Initialize()
 	patternLayout->addWidget(m_bottomLeftLabel, 1, 0);
 	patternLayout->addWidget(m_bottomRightLabel, 1, 1);
 
-	// row4,5
-	mainLayout->addLayout(patternLayout, row, 5, 2, 2);
+	// row3, 4
+	mainLayout->addLayout(patternLayout, row, 5, 2, 1);
 
 	row += 2;
-	// row6
+	// row5
 	mainLayout->addWidget(m_rowFactorLabel, row, 1);
 	mainLayout->addWidget(m_rowFactorLineEdit, row, 2, Qt::AlignLeft);
 
 	++row;
-	// row7
+	// row6
 	mainLayout->addWidget(m_columnFactorLabel, row, 1);
 	mainLayout->addWidget(m_columnFactorLineEdit, row, 2, Qt::AlignLeft);
-	mainLayout->addWidget(m_browseButton, row, 3, Qt::AlignRight);
-	mainLayout->addWidget(m_browseLineEdit, row, 4, Qt::AlignLeft);
+	mainLayout->addWidget(m_browseButton, row, 7);
+	mainLayout->addWidget(m_browseLineEdit, row, 6, Qt::AlignRight);
 
 	++row;
-	// row8-15
+	// row6-13
 	mainLayout->addWidget(m_graphicsView, row, 0, 8, 7);
-	mainLayout->addWidget(m_placeButton, 13, 9);
-	mainLayout->addWidget(m_routeButton, 14, 9);
+	mainLayout->addWidget(m_placeButton, 13, 7);
+	mainLayout->addWidget(m_routeButton, 14, 7);
 
 	setLayout(mainLayout);
 

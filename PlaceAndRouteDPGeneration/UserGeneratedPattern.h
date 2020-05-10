@@ -3,16 +3,16 @@
 #include "Router.h"
 #include "Parser.h"
 
-#include <iostream>
 #include <QWidget>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QPushButton>
-#include <QLabel>
-#include <QComboBox>
-#include <QRadioButton>
-#include <QLineEdit>
-#include <QPixmap>
+
+class QGraphicsScene;
+class QGraphicsView;
+class QPushButton;
+class QLabel;
+class QComboBox;
+class QRadioButton;
+class QLineEdit;
+class QPixmap;
 
 class UserGeneratedPattern : public QWidget, public IPlaceDesign
 {
