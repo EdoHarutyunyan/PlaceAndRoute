@@ -19,8 +19,9 @@
 #include <QComboBox>
 #include <QRadioButton>
 #include <QLineEdit>
+#include <QTableView>
 
-Symmetric::Symmetric(QWidget *parent)
+Symmetric::Symmetric(QWidget* parent)
 	: QWidget(parent)
 	, m_parser(std::make_shared<Parser>())
 	, m_router(std::make_shared<Router>())
@@ -50,7 +51,7 @@ Symmetric::Symmetric(QWidget *parent)
 	connect(m_routeButton, SIGNAL(released()), this, SLOT(on_Route_released()));
 }
 void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectItem* area)
-{ 
+{
 	std::vector<std::pair<Cell::Type, uint32_t>> oddCells;
 	std::vector<std::pair<Cell::Type, uint32_t>> evenCells;
 	oddCells.reserve(m_groupCells.GetCount());
@@ -75,7 +76,7 @@ void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectIt
 	uint32_t width = cells.begin()->second.back().GetWidth();
 	uint32_t height = cells.begin()->second.back().GetHeight();
 	int32_t x{};
-	
+
 	static uint32_t idNumber = 0U;
 
 	if (GetSymmetryLine() == SymmetryLine::Vertical)
@@ -85,10 +86,10 @@ void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectIt
 			for (size_t j = 0; j < column / 2; ++j)
 			{
 				std::pair<Cell::Type, uint32_t> cell = evenCells.back();
-				
+
 				QGraphicsRectItem* rect1 = new QGraphicsRectItem(0, 0, width, height, area);
 				QGraphicsRectItem* rect2 = new QGraphicsRectItem(0, 0, width, height, area);
-				
+
 				rect1->setPen(QPen(Qt::black));
 				rect1->setBrush(QBrush(GetGlobalColorByType(cell.first)));
 				rect1->setPos(QPoint((j * width), (i * height)) + QPoint(25, 25));
@@ -102,7 +103,7 @@ void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectIt
 
 				QGraphicsSimpleTextItem* idItem1 = new QGraphicsSimpleTextItem(id1, rect1);
 				QGraphicsSimpleTextItem* idItem2 = new QGraphicsSimpleTextItem(id2, rect2);
-				
+
 				idItem1->setPos(((rect1->rect().topLeft() + rect1->rect().topRight()) / 2, (rect1->rect().topLeft() + rect1->rect().bottomLeft()) / 2));
 				idItem2->setPos(((rect2->rect().topLeft() + rect2->rect().topRight()) / 2, (rect2->rect().topLeft() + rect2->rect().bottomLeft()) / 2));
 
@@ -127,7 +128,7 @@ void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectIt
 
 			QGraphicsSimpleTextItem* idItem = new QGraphicsSimpleTextItem(id, rect);
 			idItem->setPos(((rect->rect().topLeft() + rect->rect().topRight()) / 2, (rect->rect().topLeft() + rect->rect().bottomLeft()) / 2));
-			
+
 			oddCells.pop_back();
 			++i;
 		}
@@ -196,7 +197,7 @@ void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectIt
 
 			rect->setPen(QPen(Qt::black));
 			rect->setBrush(QBrush(GetGlobalColorByType(currentCell.first)));
-			rect->setPos(QPoint((i* width), (row / 2 * height)) + QPoint(25, 25));
+			rect->setPos(QPoint((i * width), (row / 2 * height)) + QPoint(25, 25));
 
 			QString id = QString::fromStdString("Id" + std::to_string(idNumber++));
 
@@ -216,7 +217,7 @@ void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectIt
 				QGraphicsRectItem* rect = new QGraphicsRectItem(0, 0, width, height, area);
 				rect->setPen(QPen(Qt::black));
 				rect->setBrush(QBrush(GetGlobalColorByType(currentCell.first)));
-				rect->setPos(QPoint((i + j)* width, (row* height)) + QPoint(25, 25));
+				rect->setPos(QPoint((i + j) * width, (row / 2 * height)) + QPoint(25, 25));
 
 				QString id = QString::fromStdString("Id" + std::to_string(idNumber));
 				++idNumber;
@@ -232,7 +233,6 @@ void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectIt
 
 	m_scene->addItem(area);
 }
-
 
 std::vector<std::pair<uint32_t, uint32_t>> Symmetric::AreaGeneration()
 {
@@ -336,7 +336,7 @@ void Symmetric::Initialize()
 	// row2
 	mainLayout->addWidget(m_detailsButton, row, 7);
 	++row;
-	
+
 	// row3
 	QLabel* typeLabel = new QLabel("Type", this);
 	QLabel* countLabel = new QLabel("Count", this);
@@ -344,7 +344,7 @@ void Symmetric::Initialize()
 	QLabel* heightLabel = new QLabel("Height", this);
 
 	mainLayout->addWidget(typeLabel, row, 3, Qt::AlignCenter);
-	mainLayout->addWidget(countLabel, row, 4,Qt::AlignCenter);
+	mainLayout->addWidget(countLabel, row, 4, Qt::AlignCenter);
 	mainLayout->addWidget(widthLabel, row, 5, Qt::AlignCenter);
 	mainLayout->addWidget(heightLabel, row, 6, Qt::AlignCenter);
 	mainLayout->addItem(new QSpacerItem(150, 0), row, 0);
@@ -383,11 +383,6 @@ void Symmetric::Initialize()
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/blue.jpg"), "blue");
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/red.png"), "red");
 
-	// Set labels alignments
-	m_countLineEdit->setAlignment(Qt::AlignRight);
-	m_widthLineEdit->setAlignment(Qt::AlignRight);
-	m_heightLineEdit->setAlignment(Qt::AlignRight);
-
 	SetStyleSheets();
 }
 
@@ -408,12 +403,14 @@ void Symmetric::SetStyleSheets()
 	m_routeButton->setStyleSheet("background-color: beige");
 	m_browseButton->setStyleSheet("background-color: beige");
 	m_backButton->setStyleSheet("background-color: #4682B4");
+
+	setWindowIcon(QIcon(":/PlaceAndRouteDPGeneration/Resources/WindowIcon.jpg"));
 }
 
 void Symmetric::AddGroupCells(
-	const Cell::Type type, 
-	const uint32_t count, 
-	const uint32_t width, 
+	const Cell::Type type,
+	const uint32_t count,
+	const uint32_t width,
 	const uint32_t height)
 {
 	std::vector<Cell> createdCells;
@@ -485,7 +482,7 @@ void Symmetric::on_Add_released()
 		assert(false);
 		break;
 	}
-	
+
 	AddGroupCells(type, count, width, height);
 }
 
@@ -563,6 +560,10 @@ void Symmetric::on_Browse_released()
 
 void Symmetric::on_Details_released()
 {
+	QTableView* tableView = new QTableView(this);
+	/*tableView->setModel()*/
+	tableView->show();
+
 }
 
 void Symmetric::on_Route_released()

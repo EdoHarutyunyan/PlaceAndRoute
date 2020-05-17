@@ -377,18 +377,12 @@ void InterDigitation::Initialize()
 	setLayout(mainLayout);
 
 	showMaximized();
-	setWindowTitle("Symmetric");
+	setWindowTitle("Inter-Digitation");
 
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/green.png"), "green");
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/yellow.png"), "yellow");
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/blue.jpg"), "blue");
 	m_typeComboBox->addItem(QIcon(":/PlaceAndRouteDPGeneration/Resources/red.png"), "red");
-
-	// Set labels alignments
-	//m_typeComboBox->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Fixed);
-	m_countLineEdit->setAlignment(Qt::AlignRight);
-	m_widthLineEdit->setAlignment(Qt::AlignRight);
-	m_heightLineEdit->setAlignment(Qt::AlignRight);
 
 	SetStyleSheets();
 }
@@ -410,6 +404,8 @@ void InterDigitation::SetStyleSheets()
 	m_routeButton->setStyleSheet("background-color: beige");
 	m_browseButton->setStyleSheet("background-color: beige");
 	m_backButton->setStyleSheet("background-color: #4682B4");
+
+	setWindowIcon(QIcon(":/PlaceAndRouteDPGeneration/Resources/WindowIcon.jpg"));
 }
 
 void InterDigitation::AddGroupCells(

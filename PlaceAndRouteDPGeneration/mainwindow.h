@@ -1,11 +1,11 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QPushButton>
 
 class Symmetric;
 class InterDigitation;
 class UserGeneratedPattern;
+class QPushButton;
 
 class MainWindow : public QMainWindow
 {

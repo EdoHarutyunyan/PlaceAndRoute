@@ -25,7 +25,7 @@ namespace
 	static const QString redPath = ":/PlaceAndRouteDPGeneration/Resources/red.png";
 
 	static const uint32_t cellHeight = 50U;
-	static const uint32_t cellWidth = 50U;
+	static const uint32_t cellWidth = 70U;
 }
 
 UserGeneratedPattern::UserGeneratedPattern(QWidget* parent)
@@ -96,7 +96,7 @@ void UserGeneratedPattern::Place(const uint32_t row, const uint32_t column, QGra
 			QGraphicsRectItem* rect = new QGraphicsRectItem(0, 0, cellWidth, cellHeight, area);
 
 			rect->setPen(QPen(Qt::black));
-			rect->setBrush(QBrush(GetColorByIndex(i, j)));
+			rect->setBrush(QBrush(GetColorByIndex(j, i)));
 
 			QString id = QString::fromStdString("Id" + std::to_string(idNumber++));
 
@@ -125,7 +125,7 @@ void UserGeneratedPattern::Initialize()
 	line->setFrameShape(QFrame::HLine); // Replace by VLine for vertical line
 	line->setFrameShadow(QFrame::Sunken);
 
-	QLabel* title = new QLabel("Generate pattern", this);
+	QLabel* title = new QLabel("Generate Own Pattern", this);
 	title->setStyleSheet("font: bold");
 	title->setStyleSheet("font-size: 20px");
 
@@ -192,7 +192,7 @@ void UserGeneratedPattern::Initialize()
 	setLayout(mainLayout);
 
 	showMaximized();
-	setWindowTitle("Generate pattern");
+	setWindowTitle("Generate Own Pattern");
 
 	m_topLeftComboBox->addItem(QIcon(greenPath), "green");
 	m_topLeftComboBox->addItem(QIcon(yellowPath), "yellow");
@@ -228,6 +228,8 @@ void UserGeneratedPattern::SetStyleSheets()
 	m_routeButton->setStyleSheet("background-color: beige");
 	m_browseButton->setStyleSheet("background-color: beige");
 	m_backButton->setStyleSheet("background-color: #4682B4");
+
+	setWindowIcon(QIcon(":/PlaceAndRouteDPGeneration/Resources/WindowIcon.jpg"));
 }
 
 void UserGeneratedPattern::on_Back_released()

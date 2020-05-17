@@ -9,5 +9,7 @@
         <file>Resources/red.png</file>
         <file>Resources/yellow.png</file>
         <file>Resources/UserGenerated.png</file>
+        <file>Resources/WindowIcon.jpg</file>
+        <file>Resources/SplashScreen.png</file>
     </qresource>
 </RCC>

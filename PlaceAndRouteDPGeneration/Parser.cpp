@@ -5,7 +5,7 @@
 std::vector<std::vector<uint32_t>> Parser::Parse(QString&& text)
 {
 	std::vector<std::vector<uint32_t>> idsAdj;
-	idsAdj.resize(100);
+	idsAdj.resize(1000);
 	std::vector<std::string> tokens;
 	std::stringstream stream(text.toStdString());
 	std::string item;
