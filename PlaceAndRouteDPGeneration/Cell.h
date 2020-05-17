@@ -4,7 +4,7 @@
 class Cell
 {
 public:
-	enum class Type : uint32_t
+	enum Type : uint32_t
 	{
 		Green = 0,
 		Yellow = 1,

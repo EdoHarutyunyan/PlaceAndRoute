@@ -82,6 +82,7 @@
   <ItemGroup>
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="GroupCells.cpp" />
+    <ClCompile Include="GroupCellsModel.cpp" />
     <ClCompile Include="InterDigitation.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
@@ -117,6 +118,7 @@
     <ClInclude Include="Cell.h" />
     <ClInclude Include="GraphUtils.h" />
     <ClInclude Include="GroupCells.h" />
+    <QtMoc Include="GroupCellsModel.h" />
     <ClInclude Include="IPlaceDesign.h" />
     <ClInclude Include="IRoute.h" />
     <ClInclude Include="Parser.h" />

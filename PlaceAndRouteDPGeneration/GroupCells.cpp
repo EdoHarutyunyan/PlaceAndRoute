@@ -22,7 +22,7 @@ void GroupCells::AddCells(const std::vector<Cell>& cells)
 	m_count += cells.size();
 }
 
-inline void GroupCells::SetCount(const uint32_t count)
+void GroupCells::SetCount(const uint32_t count)
 {
 	m_count = count;
 }

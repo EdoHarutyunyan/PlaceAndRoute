@@ -12,6 +12,7 @@ class QPushButton;
 class QComboBox;
 class QRadioButton;
 class QLineEdit;
+class GroupCellsModel;
 
 class Symmetric : public QWidget, public IPlaceDesign
 {
@@ -19,7 +20,7 @@ class Symmetric : public QWidget, public IPlaceDesign
 
 public:
     explicit Symmetric(QWidget *parent = nullptr);
-	~Symmetric() = default;
+	~Symmetric();
 
 	enum class SymmetryLine : bool
 	{
@@ -54,6 +55,7 @@ private:
 	SymmetryLine m_symmetryLine;
 	std::shared_ptr<Parser> m_parser;
 	std::shared_ptr<Router> m_router;
+	GroupCellsModel* m_groupCellsModel;
 
 	QGraphicsView* m_graphicsView;
 	QGraphicsScene* m_scene;

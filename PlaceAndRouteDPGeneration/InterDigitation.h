@@ -12,6 +12,7 @@ class QPushButton;
 class QComboBox;
 class QRadioButton;
 class QLineEdit;
+class GroupCellsModel;
 
 class InterDigitation : public QWidget, public IPlaceDesign
 {
@@ -54,6 +55,7 @@ private:
 	Mode m_mode;
 	std::shared_ptr<Parser> m_parser;
 	std::shared_ptr<Router> m_router;
+	GroupCellsModel* m_groupCellsModel;
 
 	QGraphicsView* m_graphicsView;
 	QGraphicsScene* m_scene;

@@ -20,11 +20,14 @@
 #include <QRadioButton>
 #include <QLineEdit>
 #include <QTableView>
+#include <QDockWidget>
+#include "GroupCellsModel.h"
 
 Symmetric::Symmetric(QWidget* parent)
 	: QWidget(parent)
 	, m_parser(std::make_shared<Parser>())
 	, m_router(std::make_shared<Router>())
+	, m_groupCellsModel(new GroupCellsModel(this))
 	, m_graphicsView(new QGraphicsView(this))
 	, m_scene(new QGraphicsScene(this))
 	, m_backButton(new QPushButton("< Back", this))
@@ -50,6 +53,12 @@ Symmetric::Symmetric(QWidget* parent)
 	connect(m_placeButton, SIGNAL(released()), this, SLOT(on_Place_released()));
 	connect(m_routeButton, SIGNAL(released()), this, SLOT(on_Route_released()));
 }
+
+Symmetric::~Symmetric()
+{
+	delete m_groupCellsModel;
+}
+
 void Symmetric::Place(const uint32_t row, const uint32_t column, QGraphicsRectItem* area)
 {
 	std::vector<std::pair<Cell::Type, uint32_t>> oddCells;
@@ -407,24 +416,6 @@ void Symmetric::SetStyleSheets()
 	setWindowIcon(QIcon(":/PlaceAndRouteDPGeneration/Resources/WindowIcon.jpg"));
 }
 
-void Symmetric::AddGroupCells(
-	const Cell::Type type,
-	const uint32_t count,
-	const uint32_t width,
-	const uint32_t height)
-{
-	std::vector<Cell> createdCells;
-	createdCells.reserve(count);
-
-	for (size_t i = 0; i < count; ++i)
-	{
-		uint32_t currentId = m_groupCells.GetCount() + 1;
-		createdCells.push_back(Cell(type, width, height, currentId));
-	}
-
-	m_groupCells.AddCells(createdCells);
-}
-
 Qt::GlobalColor Symmetric::GetGlobalColorByType(const Cell::Type type) const
 {
 	Qt::GlobalColor color{};
@@ -484,6 +475,25 @@ void Symmetric::on_Add_released()
 	}
 
 	AddGroupCells(type, count, width, height);
+}
+
+void Symmetric::AddGroupCells(
+	const Cell::Type type,
+	const uint32_t count,
+	const uint32_t width,
+	const uint32_t height)
+{
+	std::vector<Cell> createdCells;
+	createdCells.reserve(count);
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		uint32_t currentId = m_groupCells.GetCount() + 1;
+		createdCells.push_back(Cell(type, width, height, currentId));
+	}
+
+	m_groupCellsModel->UpdateTableData(type, count, width, height);
+	m_groupCells.AddCells(createdCells);
 }
 
 void Symmetric::on_Place_released()
@@ -560,10 +570,14 @@ void Symmetric::on_Browse_released()
 
 void Symmetric::on_Details_released()
 {
+	QDockWidget* detailsWidget = new QDockWidget("Details");
 	QTableView* tableView = new QTableView(this);
-	/*tableView->setModel()*/
+	tableView->setModel(m_groupCellsModel);
 	tableView->show();
-
+	
+	detailsWidget->setWindowIcon(QIcon(":/PlaceAndRouteDPGeneration/Resources/WindowIcon.jpg"));
+	detailsWidget->setWidget(tableView);
+	detailsWidget->show();
 }
 
 void Symmetric::on_Route_released()

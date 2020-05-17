@@ -16,11 +16,15 @@
 #include <QComboBox>
 #include <QRadioButton>
 #include <QLineEdit>
+#include <QTableView>
+#include <QDockWidget>
+#include "GroupCellsModel.h"
 
 InterDigitation::InterDigitation(QWidget* parent)
 	: QWidget(parent)
 	, m_parser(std::make_shared<Parser>())
 	, m_router(std::make_shared<Router>())
+	, m_groupCellsModel(new GroupCellsModel(this))
 	, m_graphicsView(new QGraphicsView(this))
 	, m_scene(new QGraphicsScene(this))
 	, m_backButton(new QPushButton("< Back", this))
@@ -312,9 +316,6 @@ std::vector<std::pair<uint32_t, uint32_t>> InterDigitation::AreaGeneration()
 
 void InterDigitation::Initialize()
 {
-	//setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
-	//mainLayout->setSizeConstraint(QLayout::SizeConstraint::SetMinimumSize);
-	
 	QGridLayout* mainLayout = new QGridLayout();
 	QFrame* line = new QFrame();
 	line->setGeometry(QRect(/* ... */));
@@ -423,6 +424,7 @@ void InterDigitation::AddGroupCells(
 		createdCells.push_back(Cell(type, width, height, currentId));
 	}
 
+	m_groupCellsModel->UpdateTableData(type, count, width, height);
 	m_groupCells.AddCells(createdCells);
 }
 
@@ -507,7 +509,14 @@ void InterDigitation::on_Back_released()
 
 void InterDigitation::on_Details_released()
 {
-	// SHOW Details
+	QDockWidget* detailsWidget = new QDockWidget("Details");
+	QTableView* tableView = new QTableView(this);
+	tableView->setModel(m_groupCellsModel);
+	tableView->show();
+
+	detailsWidget->setWindowIcon(QIcon(":/PlaceAndRouteDPGeneration/Resources/WindowIcon.jpg"));
+	detailsWidget->setWidget(tableView);
+	detailsWidget->show();
 }
 
 void InterDigitation::on_Place_released()
