@@ -51,6 +51,11 @@ InterDigitation::InterDigitation(QWidget* parent)
 	connect(m_routeButton, SIGNAL(released()), this, SLOT(on_Route_released()));
 }
 
+InterDigitation::~InterDigitation()
+{
+	delete m_groupCellsModel;
+}
+
 void InterDigitation::Place(const uint32_t row, const uint32_t column, QGraphicsRectItem* area)
 {
 	static uint32_t idNumber = 0U;
@@ -466,7 +471,6 @@ InterDigitation::Mode InterDigitation::GetMode() const
 
 void InterDigitation::on_Add_released()
 {
-	// timer 
 	Cell::Type type{};
 	const auto typeIndex = m_typeComboBox->currentIndex();
 	const auto count = m_countLineEdit->text().toUInt();
@@ -514,7 +518,7 @@ void InterDigitation::on_Details_released()
 	tableView->setModel(m_groupCellsModel);
 	tableView->show();
 
-	detailsWidget->setWindowIcon(QIcon(":/PlaceAndRouteDPGeneration/Resources/WindowIcon.jpg"));
+	detailsWidget->setWindowIcon(QIcon(":/PlaceAndRouteDPGeneration/Resources/basket.png"));
 	detailsWidget->setWidget(tableView);
 	detailsWidget->show();
 }

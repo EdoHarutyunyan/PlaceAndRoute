@@ -25,7 +25,7 @@ namespace graphUtils
 		return QString::fromStdString(idString);
 	}
 
-	inline void connectNodes(std::vector<std::vector<uint32_t>>& graph, const int source, const int target)
+	inline void ConnectNodes(std::vector<std::vector<uint32_t>>& graph, const int source, const int target)
 	{
 		if (std::find(graph[source].begin(), graph[source].end(), target) != graph[source].end())
 		{
@@ -34,6 +34,5 @@ namespace graphUtils
 		}
 
 		graph[source].push_back(target);
-		graph[target].push_back(source);
 	}
 }

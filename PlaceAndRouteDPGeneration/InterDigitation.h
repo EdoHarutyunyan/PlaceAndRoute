@@ -20,7 +20,7 @@ class InterDigitation : public QWidget, public IPlaceDesign
 
 public:
     explicit InterDigitation(QWidget *parent = nullptr);
-	~InterDigitation() = default;
+	~InterDigitation();
 
 	enum class Mode : bool
 	{

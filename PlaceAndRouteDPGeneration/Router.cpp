@@ -151,7 +151,7 @@ void Router::PrepareGraph(
 				{
 					uint32_t source = graphUtils::GetIdNumberByString(itemIds[i]->text().toStdString());
 					uint32_t target = graphUtils::GetIdNumberByString(itemIds[j]->text().toStdString());
-					graphUtils::connectNodes(graph, source, target);
+					graphUtils::ConnectNodes(graph, source, target);
 				}
 			}
 		}

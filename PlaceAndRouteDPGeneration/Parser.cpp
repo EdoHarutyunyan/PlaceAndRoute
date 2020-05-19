@@ -23,7 +23,7 @@ std::vector<std::vector<uint32_t>> Parser::Parse(QString&& text)
 		uint32_t source = graphUtils::GetIdNumberByString(tokens[i]);
 		uint32_t target = graphUtils::GetIdNumberByString(tokens[i + 1]);
 
-		graphUtils::connectNodes(idsAdj, source, target);
+		graphUtils::ConnectNodes(idsAdj, source, target);
 	}
 
 	return idsAdj;

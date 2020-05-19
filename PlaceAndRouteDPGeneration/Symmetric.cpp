@@ -31,7 +31,7 @@ Symmetric::Symmetric(QWidget* parent)
 	, m_graphicsView(new QGraphicsView(this))
 	, m_scene(new QGraphicsScene(this))
 	, m_backButton(new QPushButton("< Back", this))
-	, m_detailsButton(new QPushButton(this))
+	, m_detailsButton(new QPushButton("Details", this))
 	, m_addButton(new QPushButton("Add", this))
 	, m_browseButton(new QPushButton("Browse", this))
 	, m_placeButton(new QPushButton("Place", this))
@@ -575,7 +575,7 @@ void Symmetric::on_Details_released()
 	tableView->setModel(m_groupCellsModel);
 	tableView->show();
 	
-	detailsWidget->setWindowIcon(QIcon(":/PlaceAndRouteDPGeneration/Resources/WindowIcon.jpg"));
+	detailsWidget->setWindowIcon(QIcon(":/PlaceAndRouteDPGeneration/Resources/basket.png"));
 	detailsWidget->setWidget(tableView);
 	detailsWidget->show();
 }
