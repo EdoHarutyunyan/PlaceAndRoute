@@ -64,7 +64,7 @@ void MainWindow::Initialize()
 	mainWidget->setLayout(mainLayout);
 	setCentralWidget(mainWidget);
 	
-	setWindowTitle("PnR Design Patters Generation");
+	setWindowTitle("PnR Design Patterns Generation");
 	setWindowIcon(QIcon(":/PlaceAndRouteDPGeneration/Resources/WindowIcon.jpg"));
 }
 
